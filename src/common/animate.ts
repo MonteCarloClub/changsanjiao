@@ -18,8 +18,8 @@ export function moveTo(
 ) {
   anime({
     targets: element,
-    marginLeft: destination.x,
-    marginTop: destination.y,
+    left: destination.x,
+    top: destination.y,
     easing: 'easeInOutExpo',
     complete: cb,
   });

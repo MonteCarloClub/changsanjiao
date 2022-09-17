@@ -29,7 +29,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { shrink } from "@/common/animate";
 
-const emit = defineEmits(['finished'])
+const emit = defineEmits(['finished']);
 
 const refData = ref<HTMLElement | null>(null);
 

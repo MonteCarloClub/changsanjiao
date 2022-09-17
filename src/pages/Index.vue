@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import InputForm from "@/components/InputForm.vue";
 import { ref, onMounted } from "vue";
-import { Net, Node } from "@/common/nodes";
+
+import InputForm from "@/components/InputForm.vue";
 import Blockchain from "@/components/Blockchain.vue";
+import Broadcast from "@/components/Broadcast.vue";
+
+import { Net, Node } from "@/common/nodes";
 import { moveTo } from "@/common/animate";
 
+// 初始化背景，区块链网络的数据同步
 const refWindow = ref<HTMLElement | null>(null);
 let nodes = ref<Node[]>([] as Node[]);
 let screenWidth = ref(0);
@@ -19,18 +23,31 @@ onMounted(() => {
     }
 })
 
+// 选中一个节点，开始广播
 const refDataSource = ref<HTMLElement | null>(null);
+const startBroadcast = ref(-1);
+const refBroadcast = ref<typeof Broadcast | null>(null);
 const formFinished = () => {
-    const node = nodes.value[0];
+    startBroadcast.value = Math.round(Math.random() * (nodes.value.length - 1));
+    const node = nodes.value[startBroadcast.value];
     const { x, y } = node;
-    refDataSource.value && moveTo(refDataSource.value, { x, y })
+    refDataSource.value && moveTo(refDataSource.value, { x, y }, () => {
+        if(refBroadcast.value) {
+            refBroadcast.value.broadcastFrom(startBroadcast.value)
+        }
+    })
+}
+
+// 数据被同步到某个节点上时，可以触发节点对应的动画
+const broadArrived = (index: number) => {
+    console.log(index);
 }
 </script>
 
 <template>
     <div ref="refWindow" class="fullscreen">
         <Blockchain v-if="screenWidth > 0" :width="screenWidth" :height="screenHeight" :nodes="nodes" />
-
+        <Broadcast ref="refBroadcast" :nodes="nodes" :startIndex="startBroadcast" @arrived="broadArrived"/>
         <div class="node" v-for="node in nodes" :style="{
           left: node.x + 'px',
           top: node.y + 'px'
@@ -74,8 +91,9 @@ const formFinished = () => {
 .data-source {
     width: fit-content;
     z-index: 10;
-    margin-top: 50%;
-    margin-left: 50%;
+    left: 50%;
+    top: 50%;
+    position: absolute;
     transform: translateX(-50%) translateY(-50%);
 }
 </style>
