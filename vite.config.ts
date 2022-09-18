@@ -9,5 +9,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
     },
-  }
+  },
+  // 打包后的根路径
+  base: "/be/",
 })
