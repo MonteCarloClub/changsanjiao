@@ -1,35 +1,39 @@
 <template>
     <div class="input-form" ref="refData">
-        <div class="header">
-            <div class="header-title">
-                学习成果
+        <div v-if="visible">
+            <div class="header">
+                <div class="header-title">
+                    学习成果
+                </div>
             </div>
-        </div>
-        <div class="body">
-            <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
-                autocomplete="off" labelAlign="left">
-                <a-form-item label="姓名" name="username">
-                    <a-input v-model:value="formState.username" />
-                </a-form-item>
-                <a-form-item label="科目" name="class">
-                    <a-input v-model:value="formState.class" />
-                </a-form-item>
-                <a-form-item label="成绩" name="score">
-                    <a-input v-model:value="formState.score" />
-                </a-form-item>
-            </a-form>
-        </div>
-        <div class="footer">
-            <a-button type="primary">确认</a-button>
+            <div class="body">
+                <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
+                    autocomplete="off" labelAlign="left">
+                    <a-form-item label="姓名" name="username">
+                        <a-input v-model:value="formState.username" />
+                    </a-form-item>
+                    <a-form-item label="科目" name="class">
+                        <a-input v-model:value="formState.class" />
+                    </a-form-item>
+                    <a-form-item label="成绩" name="score">
+                        <a-input v-model:value="formState.score" />
+                    </a-form-item>
+                </a-form>
+            </div>
+            <div class="footer">
+                <a-button type="primary">确认</a-button>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue';
-import { shrink } from "@/common/animate";
 
-const emit = defineEmits(['finished']);
+import { dataSettings } from "@/common/settings";
+import { shrink, transformToDataBlock, fadeOut, enlargeIn } from "@/common/animate";
+
+const emit = defineEmits(['formFilled', 'shrinked']);
 
 const refData = ref<HTMLElement | null>(null);
 
@@ -48,11 +52,13 @@ const formState = reactive<FormState>({
 
 const showModal = () => {
     visible.value = true;
+    refData.value && enlargeIn(refData.value, () => {
+        fillForm();
+    })
 };
 
 const handleFinished = () => {
-    visible.value = false;
-    emit('finished')
+    emit('formFilled')
 };
 
 const filledForm = {
@@ -91,13 +97,25 @@ const completeFill = () => {
 
 onMounted(() => {
     showModal();
-    fillForm();
+})
+
+const transformToData = () => {
+    // 隐藏表单
+    visible.value = false;
+    refData.value && transformToDataBlock(refData.value, dataSettings.dataBlockSize, () => {
+        refData.value && fadeOut(refData.value);
+        emit('shrinked')
+    });
+}
+
+defineExpose({
+    transformToData
 })
 </script>
 
 <style scoped>
 .input-form {
-    width: 400px;
+    width: 0px;
     height: fit-content;
     background: #fff;
     box-shadow: 0px 0px 8px rgb(212, 212, 212);

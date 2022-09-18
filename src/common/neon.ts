@@ -13,6 +13,7 @@ export function neonPath(
   config: {
     speed: number;
     neonSize: number;
+    color: string;
   }
 ) {
   const w = canvas.width;
@@ -37,10 +38,9 @@ export function neonPath(
     // 主亮点阴影
     shadowToTimePropMult: 6,
 
-    // color: 'hsl(hue, 100%, 0%)',
+    color: config.color,
     // 色彩变化率
     // hueChange: .1
-    color: "hsl(6, 100%, 0%)",
   };
 
   function randomPath() {
@@ -91,6 +91,7 @@ export function neonPath(
     this.process = 0;
 
     // this.color = opts.color.replace('hue', tick * opts.hueChange);
+    this.color = opts.color
   };
 
   Line.prototype.step = function () {
@@ -133,7 +134,7 @@ export function neonPath(
     requestAnimationFrame(loop);
     // ++tick;
 
-    // 下面这段代码值 $ 10M
+    // 下面这段代码价值 $1,000,000
     var data = ctx.getImageData(0, 0, w, h).data;
     var newImgData = ctx.createImageData(w, h);
     for (var i = 0; i < newImgData.data.length; i += 4) {

@@ -14,7 +14,7 @@ const nodes = [
   {
     x: 31,
     y: 20,
-    neighbors: [1, 2, 3],
+    neighbors: [2, 3],
   },
   {
     x: 82,
@@ -33,13 +33,28 @@ const nodes = [
   },
   {
     x: 50,
-    y: 74,
+    y: 84,
     neighbors: [2, 3, 5],
   },
   {
     x: 84,
     y: 62,
     neighbors: [4],
+  },
+  {
+    x: 8,
+    y: 28,
+    neighbors: [0, 2],
+  },
+  {
+    x: 13,
+    y: 80,
+    neighbors: [4, 2],
+  },
+  {
+    x: 53,
+    y: 10,
+    neighbors: [0, 1],
   },
 ];
 

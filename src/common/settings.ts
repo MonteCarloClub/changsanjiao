@@ -1,0 +1,17 @@
+export const bankSettings = {
+    bankImageSize: 64,
+    blockSize: 10,
+    blockGap: 2,
+    blockNumPerRow: 5
+}
+
+export const dataSettings = {
+    dataBlockSize: 20
+}
+
+export const blockchainSettings = {
+    signalSpeed: 5,
+    signalSize: 5,
+    signalColor: "hsl(6, 0%, 54%)"
+}
+

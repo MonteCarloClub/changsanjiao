@@ -1,16 +1,21 @@
 <template>
     <div v-for="(node, i) in nodes" :ref="el => { divs[i] = el }" class="node" :style="{
-        opacity: 0
+        opacity: 0,
+        width: blockSize + 'px',
+        height: blockSize + 'px',
+        backgroundColor: blockColor
     }">
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, PropType } from 'vue'
-import { moveTo } from "../common/animate";
+import { ref, PropType } from 'vue'
+
+import { moveTo, fadeOut } from "@/common/animate";
+import { dataSettings } from "@/common/settings";
 import { Node } from "@/common/nodes";
 
-const emit = defineEmits(['arrived']);
+const emit = defineEmits(['arrived', 'finished']);
 
 const props = defineProps({
     startIndex: {
@@ -20,7 +25,15 @@ const props = defineProps({
     nodes: {
         type: Array as PropType<Node[]>,
         default: null
-    }
+    },
+    blockSize: {
+        type: Number,
+        default: dataSettings.dataBlockSize
+    },
+    blockColor: {
+        type: String,
+        default: '#000'
+    },
 })
 
 const divs = ref<Array<any>>([]);
@@ -40,7 +53,6 @@ const broadcastFrom = (start: number) => {
         animateFromTo(props.nodes[start], i)
     }
 }
-defineExpose({ broadcastFrom })
 
 // 创建从起点到终点的移动动画
 function animateFromTo(from: Node, toIndex: number) {
@@ -53,14 +65,17 @@ function animateFromTo(from: Node, toIndex: number) {
         x: to.x,
         y: to.y
     }, () => {
+        fadeOut(div);
         emit('arrived', toIndex)
         broadcastFrom(toIndex);
     })
 }
 
-// watch(() => props.startIndex, (cur) => {
-//     broadcastFrom(cur)
-// })
+defineExpose({ 
+    broadcastFrom: (start: number) => {
+        animateFromTo(props.nodes[start], start)
+    }
+})
 </script>
 
 <style scoped>
@@ -69,9 +84,6 @@ function animateFromTo(from: Node, toIndex: number) {
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background-color: black;
-    width: 20px;
-    height: 20px;
 }
 
 </style>

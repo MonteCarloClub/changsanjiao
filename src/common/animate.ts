@@ -11,6 +11,17 @@ export function shrink(element: HTMLElement, cb?: () => void) {
   });
 }
 
+export function transformToDataBlock(element: HTMLElement, blockSize: number, cb?: () => void) {
+  anime({
+    targets: element,
+    width: blockSize,
+    height: blockSize,
+    backgroundColor: '#000',
+    borderRadius: ["0%"],
+    complete: cb,
+  });
+}
+
 export function moveTo(
   element: HTMLElement,
   destination: { x: number; y: number },
@@ -24,3 +35,26 @@ export function moveTo(
     complete: cb,
   });
 }
+
+export function fadeOut(
+  element: HTMLElement,
+  cb?: () => void
+) {
+  anime({
+    targets: element,
+    opacity: 0,
+    complete: cb,
+  });
+}
+
+export function enlargeIn(
+  element: HTMLElement,
+  cb?: () => void
+) {
+  anime({
+    targets: element,
+    width: 400,
+    complete: cb,
+  });
+}
+

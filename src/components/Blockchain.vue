@@ -3,9 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, PropType } from 'vue'
+import { ref, onMounted, computed, PropType } from 'vue';
+
 import { neonPath } from "../common/neon";
 import { Node } from "@/common/nodes";
+import { blockchainSettings } from "@/common/settings";
 
 const props = defineProps({
     width: {
@@ -37,8 +39,9 @@ onMounted(() => {
         canvas.width = props.width;
         canvas.height = props.height;
         var neon = neonPath(canvas, props.nodes, {
-            speed: 5,
-            neonSize: 5
+            speed: blockchainSettings.signalSpeed,
+            neonSize: blockchainSettings.signalSize,
+            color: blockchainSettings.signalColor
         })
         neon?.init()
     }
