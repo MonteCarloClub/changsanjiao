@@ -1,8 +1,10 @@
 <template>
-  <router-view></router-view>
+  <!-- <router-view></router-view> -->
+  <Index />
 </template>
 
 <script setup lang="ts">
+  import Index from "@/pages/Index.vue";
 // import { useStore } from "@/store";
 // import { computed } from 'vue'
 
