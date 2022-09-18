@@ -11,5 +11,5 @@ export default defineConfig({
     },
   },
   // 打包后的根路径
-  base: "/be/",
+  base: "/bank/",
 })
