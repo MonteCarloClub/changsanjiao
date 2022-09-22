@@ -6,23 +6,7 @@
                     学习成果
                 </div>
             </div>
-            <div class="body">
-                <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
-                    autocomplete="off" labelAlign="left">
-                    <a-form-item label="姓名" name="username">
-                        <a-input v-model:value="formState.username" />
-                    </a-form-item>
-                    <a-form-item label="科目" name="class">
-                        <a-input v-model:value="formState.class" />
-                    </a-form-item>
-                    <a-form-item label="成绩" name="score">
-                        <a-input v-model:value="formState.score" />
-                    </a-form-item>
-                </a-form>
-            </div>
-            <div class="footer">
-                <a-button type="primary">确认</a-button>
-            </div>
+
         </div>
     </div>
 </template>
@@ -37,57 +21,18 @@ const emit = defineEmits(['formFilled', 'shrinked']);
 
 const refData = ref<HTMLElement | null>(null);
 
-interface FormState {
-    username: string;
-    class: string;
-    score: string;
-}
-
 const visible = ref<boolean>(false);
-const formState = reactive<FormState>({
-    username: '',
-    class: '',
-    score: '',
-});
 
 const showModal = () => {
     visible.value = true;
     refData.value && enlargeIn(refData.value, () => {
-        fillForm();
+        completeFill();
     })
 };
 
 const handleFinished = () => {
     emit('formFilled')
 };
-
-const filledForm = {
-    username: '小明',
-    class: '数据结构',
-    score: '100',
-}
-
-const fillForm = () => {
-    setTimeout(() => {
-        let filling = false;
-        let key: keyof typeof formState;
-        for (key in formState) {
-            const curL = formState[key].length;
-            if (curL < filledForm[key].length) {
-                formState[key] = filledForm[key].slice(0, curL + 1)
-                filling = true;
-                break;
-            }
-        }
-
-        if (filling) {
-            fillForm();
-        }
-        else {
-            completeFill();
-        }
-    }, 200)
-}
 
 const completeFill = () => {
     refData.value && shrink(refData.value, () => {

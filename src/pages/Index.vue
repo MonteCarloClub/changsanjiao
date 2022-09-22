@@ -12,6 +12,7 @@ import { moveTo } from "@/common/animate";
 
 import { useAnimateStore } from "@/store/animate";
 import { storeToRefs } from "pinia";
+import { time } from "console";
 
 // 动画状态
 const animateStore = useAnimateStore();
@@ -32,7 +33,6 @@ onMounted(() => {
         screenHeight.value = height;
         screenWidth.value = width;
         isScreenReady = true;
-        console.log("before prepare",isStepFinished.value);
     }
 })
 
@@ -44,21 +44,16 @@ watch(
         if (isNext.value === true) {
             if (step === 0) {
                 prepareData();
-                animateStore.finishedStep();
             }else if(step === 1){
                 formShrinked();
-                animateStore.finishedStep();
             }
         }
     }
 );
 
-
 // 1.开始准备数据
 const dataVisible = ref<boolean>(false);
 const prepareData = () => {
-    console.log("in prepareDate isStepFinished:",isStepFinished.value);
-    step = 1;
     dataVisible.value = true;
 }
 
@@ -82,13 +77,15 @@ const formFinished = () => {
 // 2.从当前节点开始广播，上链
 const refBroadcast = ref<typeof Broadcast | null>(null);
 const formShrinked = () => {
+    if (step === 0) {
+        step = 1;
+        animateStore.finishedStep();
+    }
     if (refBroadcast.value && !isStep.value) {
-        // console.log("!isStep");
         step = 2;
         refBroadcast.value.broadcastFrom(startBroadcast.value)
         dataVisible.value = false
     } else if (refBroadcast.value && isStep.value && isNext.value) {
-        // console.log("isStep:",isStep.value," isNext:", isNext.value);
         step = 2;
         refBroadcast.value.broadcastFrom(startBroadcast.value)
         dataVisible.value = false;
@@ -110,6 +107,7 @@ const broadArrived = (index: number) => {
 
 // 一轮播放结束后，循环
 const broadcastFinished = () => {
+    animateStore.finishedStep();
     broadcastVisible.value = false;
     step = 0;
     if (!isStep.value) {
@@ -137,7 +135,7 @@ const broadcastFinished = () => {
         </div>
     </div>
 
-    <div class="">
+    <div class="switch">
         <Menu></Menu>
     </div>
 </template>
@@ -149,6 +147,13 @@ const broadcastFinished = () => {
     top: 0;
     right: 0;
     bottom: 0;
+    left: 0;
+}
+
+.switch {
+    position: fixed;
+    right: 0;
+    bottom: 30px;
     left: 0;
 }
 
