@@ -5,6 +5,10 @@ export const bankSettings = {
     blockNumPerRow: 5
 }
 
+export const roleSettings = {
+    roleImageSize: 64
+}
+
 export const dataSettings = {
     dataBlockSize: 20
 }
