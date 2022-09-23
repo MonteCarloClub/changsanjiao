@@ -125,7 +125,7 @@ const broadcastFinished = () => {
           left: node.x + 'px',
           top: node.y + 'px'
         }">
-            <Bank :ref="(el: any) => { refBanks[i] = el }" />
+            <Bank :ref="(el: any) => { refBanks[i] = el }" :svgColor="node.color"/>
         </div>
     </div>
 

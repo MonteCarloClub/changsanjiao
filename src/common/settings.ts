@@ -12,6 +12,6 @@ export const dataSettings = {
 export const blockchainSettings = {
     signalSpeed: 5,
     signalSize: 5,
-    signalColor: "hsl(6, 0%, 54%)"
+    signalColor: "hsl(217, 87%, 32%)"
 }
 

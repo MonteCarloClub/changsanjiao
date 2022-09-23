@@ -1,8 +1,13 @@
 <template>
-    <div :style="{
+    <div class="bank" :style="{
         width: bankSize
     }">
-        <img src="@/assets/bank.svg" alt="学分银行">
+        <div v-if="svgColor === 'black'">
+            <img src="@/assets/bank.svg" alt="学分银行">
+        </div>
+        <div v-else>
+            <img src="@/assets/bankBlue.svg" alt="学分银行">
+        </div>
         <div class="blocks" :style="{
             gap: blockGap + 'px',
             width: (blockNumPerRow * blockSize + (blockNumPerRow - 1) * blockGap) + 'px'
@@ -42,6 +47,10 @@ const props = defineProps({
     blockNumPerRow: {
         type: Number,
         default: bankSettings.blockNumPerRow
+    },
+    svgColor: {
+        type: String,
+        default: 'black'
     }
 })
 
@@ -55,7 +64,6 @@ defineExpose({ addBlock })
 </script>
 
 <style scoped>
-
 .blocks {
     flex-flow: wrap;
     display: flex;
@@ -63,4 +71,12 @@ defineExpose({ addBlock })
     left: 50%;
     transform: translateX(-50%);
 }
+
+/* .bank{
+	overflow:hidden;
+}
+img{
+	transform:translateX(-80px);
+	filter:drop-shadow(red 80px 0); 
+} */
 </style>

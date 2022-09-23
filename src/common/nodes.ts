@@ -5,6 +5,7 @@ export type Node = {
   x: number;
   y: number;
   neighbors: number[];
+  color: string;
 };
 
 /**
@@ -15,46 +16,55 @@ const nodes = [
     x: 31,
     y: 20,
     neighbors: [2, 3],
+    color: 'bisque',
   },
   {
     x: 82,
     y: 19,
     neighbors: [3, 5],
+    color: 'bisque',
   },
   {
     x: 21,
     y: 56,
     neighbors: [4],
+    color: 'bisque',
   },
   {
     x: 60,
     y: 48,
     neighbors: [0, 1, 2],
+    color: 'black',
   },
   {
     x: 50,
     y: 84,
     neighbors: [2, 3, 5],
+    color: 'black',
   },
   {
     x: 84,
     y: 62,
     neighbors: [4],
+    color: 'black',
   },
   {
     x: 8,
     y: 28,
     neighbors: [0, 2],
+    color: 'black',
   },
   {
     x: 13,
     y: 80,
     neighbors: [4, 2],
+    color: 'black',
   },
   {
     x: 53,
     y: 10,
     neighbors: [0, 1],
+    color: 'black',
   },
 ];
 
