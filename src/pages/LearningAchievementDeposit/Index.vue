@@ -1,26 +1,32 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { createScene, Role as Node } from "@/common/roles";
-import Role from "@/components/Role.vue";
+import { ref } from "vue";
 
-const refWindow = ref<HTMLElement | null>(null);
-let nodes = ref<Node[]>([] as Node[]);
+import { genSteps, Step } from "@/common/step";
+import { Role as Node } from "@/common/roles";
+import { createScene } from "@/common/scene";
+
+import Role from "@/components/Role.vue";
+import Steps from "@/components/Steps.vue";
+import Blockchain from "@/components/Blockchain.vue";
 
 const init: Node[] = [
     {
         x: 15,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 40,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 65,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 85,
@@ -30,25 +36,61 @@ const init: Node[] = [
     },
     {
         x: 40,
-        y: 20,
+        y: 60,
         role: 'institution',
         title: '机构'
     },
     {
         x: 40,
-        y: 60,
+        y: 20,
         role: 'bank',
         title: '学分银行'
     },
 ]
 
-onMounted(() => {
-    const screenInfos = refWindow.value?.getClientRects();
-    if (screenInfos && screenInfos?.length > 0) {
-        const { width, height } = screenInfos[0];
-        nodes.value = createScene(init, width, height);
-    }
-})
+const steps: Step[] = [
+    {
+        title: 'First',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+    {
+        title: 'Second',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+    {
+        title: 'Last',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+]
+const { running, currentStep, nextStep } = genSteps(steps);
+
+const refWindow = ref<HTMLElement | null>(null);
+const {
+    nodes,
+    screenWidth,
+    screenHeight,
+} = createScene(refWindow, init)
 </script>
 
 <template>
@@ -57,8 +99,12 @@ onMounted(() => {
           left: node.x + 'px',
           top: node.y + 'px'
         }">
-            <Role :role="node.role" :title="node.title"/>
+            <Role :role="node.role" :title="node.title" />
         </div>
+
+        <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+
+        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" :disabled="running" />
     </div>
 </template>
     
@@ -70,6 +116,7 @@ onMounted(() => {
     bottom: 0;
     left: 0;
 }
+
 .node {
     position: absolute;
     left: 50%;

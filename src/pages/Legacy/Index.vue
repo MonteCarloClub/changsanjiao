@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 
 import InputForm from "@/components/InputForm.vue";
-import Blockchain from "@/components/Blockchain.vue";
+import BlockchainNet from "@/components/BlockchainNet.vue";
 import Broadcast from "@/components/Broadcast.vue";
 import Bank from "@/components/Bank.vue";
 import Menu from '@/components/Menu.vue'
@@ -117,7 +117,7 @@ const broadcastFinished = () => {
 
 <template>
     <div ref="refWindow" class="fullscreen">
-        <Blockchain v-if="screenWidth > 0" :width="screenWidth" :height="screenHeight" :nodes="nodes" />
+        <BlockchainNet v-if="screenWidth > 0" :width="screenWidth" :height="screenHeight" :nodes="nodes" />
         <Broadcast v-if="broadcastVisible" ref="refBroadcast" :nodes="nodes" :startIndex="startBroadcast"
             @arrived="broadArrived" />
         <div class="node" v-for="node, i in nodes" :style="{

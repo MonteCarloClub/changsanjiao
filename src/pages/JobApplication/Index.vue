@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { createScene, Role as Node } from "@/common/roles";
-import Role from "@/components/Role.vue";
+import { ref } from "vue";
 
-const refWindow = ref<HTMLElement | null>(null);
-let nodes = ref<Node[]>([] as Node[]);
+import { Role as Node } from "@/common/roles";
+import { createScene } from "@/common/scene";
+import { genSteps,Step } from "@/common/step";
+
+import Role from "@/components/Role.vue";
+import Steps from "@/components/Steps.vue";
+import Blockchain from "@/components/Blockchain.vue";
+
 
 const init: Node[] = [
     {
@@ -48,13 +52,49 @@ const init: Node[] = [
     },
 ]
 
-onMounted(() => {
-    const screenInfos = refWindow.value?.getClientRects();
-    if (screenInfos && screenInfos?.length > 0) {
-        const { width, height } = screenInfos[0];
-        nodes.value = createScene(init, width, height);
-    }
-})
+const refWindow = ref<HTMLElement | null>(null);
+const {
+    nodes,
+    screenWidth,
+    screenHeight,
+} = createScene(refWindow, init)
+
+const steps: Step[] = [
+    {
+        title: 'First',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+    {
+        title: 'Second',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+    {
+        title: 'Last',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log('inside setTimeout');
+                    resolve(1);
+                }, 1000)
+            })
+        }
+    },
+]
+const { running, currentStep, nextStep } = genSteps(steps)
 </script>
     
 <template>
@@ -65,6 +105,10 @@ onMounted(() => {
         }">
             <Role :role="node.role" :title="node.title" />
         </div>
+
+        <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+
+        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" :disabled="running"/>
     </div>
 </template>
         

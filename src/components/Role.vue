@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { roleSettings } from "@/common/settings";
 import { roleIcons } from "@/common/roles";
 
@@ -35,7 +35,10 @@ const imgSrc = computed(() => roleIcons[props.role]);
 
 <style scoped>
 .title {
-    width: fit-content;
-    margin: auto;
+    padding-top: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
 }
 </style>

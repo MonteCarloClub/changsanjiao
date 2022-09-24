@@ -13,7 +13,7 @@ export const dataSettings = {
     dataBlockSize: 20
 }
 
-export const blockchainSettings = {
+export const blockchainNetSettings = {
     signalSpeed: 5,
     signalSize: 5,
     signalColor: "hsl(217, 87%, 32%)"

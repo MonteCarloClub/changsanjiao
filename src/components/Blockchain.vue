@@ -1,13 +1,11 @@
 <template>
-    <canvas ref="canvasEl" class="path-canvas" :style="canvasStyle"></canvas>
+    <canvas ref="canvasEl" class="path-canvas"></canvas>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, PropType } from 'vue';
-
-import { neonPath } from "../common/neon";
-import { Node } from "@/common/nodes";
-import { blockchainSettings } from "@/common/settings";
+import { ref, PropType, watch } from 'vue';
+import { Role } from "@/common/roles";
+import { drawArrow } from "@/common/utils";
 
 const props = defineProps({
     width: {
@@ -19,42 +17,46 @@ const props = defineProps({
         default: 500
     },
     nodes: {
-        type: Array as PropType<Node[]>,
+        type: Array as PropType<Role[]>,
         default: null
-    }
-})
-
-const canvasStyle = computed(() => {
-    return {
-        width: props.width,
-        height: props.height
     }
 })
 
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 
-onMounted(() => {
-    const canvas = canvasEl.value
-    if (canvas) {
-        canvas.width = props.width;
-        canvas.height = props.height;
-        var neon = neonPath(canvas, props.nodes, {
-            speed: blockchainSettings.signalSpeed,
-            neonSize: blockchainSettings.signalSize,
-            color: blockchainSettings.signalColor
-        })
-        neon?.init()
+watch(
+    () => props.nodes.length,
+    () => {
+        drawLinks()
     }
-});
+)
+
+const drawLinks = () => {
+    const canvas = canvasEl.value
+    if (!canvas) {
+        return
+    }
+
+    canvas.width = props.width;
+    canvas.height = props.height;
+    const ctx = canvas.getContext('2d')
+
+    const blocks = props.nodes.filter(role => role.role === 'block');
+    blocks.sort((r1, r2) => r1.x - r2.x);
+    if (blocks.length < 2) {
+        return
+    }
+
+    for (let index = 0; index < blocks.length - 1; index++) {
+        ctx && drawArrow(ctx, blocks[index], blocks[index + 1])
+    }
+}
 </script>
 
 <style scoped>
-
 .path-canvas {
-    transform: translateZ(15px);
     position: absolute;
     left: 0;
     top: 0;
 }
-
 </style>

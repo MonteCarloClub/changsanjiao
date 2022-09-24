@@ -23,7 +23,7 @@ export const roleIcons = {
 /**
  * 示意场景
  */
-export function createScene(roles: Role[],width: number, height: number) {
+export function createNet(roles: Role[],width: number, height: number) {
   for (let index = 0; index < roles.length; index++) {
     const role = roles[index];
     role.x = Math.round((role.x / 100) * width);
