@@ -4,6 +4,8 @@ import { ref } from "vue";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
+import { smartContract } from "@/common/settings";
+import { moveTo } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
 import Steps from "@/components/Steps.vue";
@@ -48,15 +50,41 @@ const init: Node[] = [
     },
 ]
 
+const refWindow = ref<HTMLElement | null>(null);
+const {
+    nodes,
+    screenWidth,
+    screenHeight,
+} = createScene(refWindow, init);
+
+
+const refSmartContract = ref<HTMLElement | null>(null);
+
 const steps: Step[] = [
     {
-        title: 'First',
+        title: '部署导入学习成果的智能合约',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log('inside setTimeout');
-                    resolve(1);
-                }, 1000)
+                const institutions = nodes.value.filter(node => node.role === 'institution')
+                if (institutions.length === 0) {
+                    reject(1);
+                }
+                const pos = institutions[0];
+                const div = refSmartContract.value as HTMLDivElement;
+                div.style.left = pos.x + 'px';
+                div.style.top = pos.y + 'px';
+                div.style.opacity = '1';
+
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+                const block = blocks[0];
+
+                refSmartContract.value && moveTo(refSmartContract.value, {
+                    x: block.x,
+                    y: block.y,
+                }, () => resolve(1))
             })
         }
     },
@@ -85,12 +113,6 @@ const steps: Step[] = [
 ]
 const { running, currentStep, nextStep } = genSteps(steps);
 
-const refWindow = ref<HTMLElement | null>(null);
-const {
-    nodes,
-    screenWidth,
-    screenHeight,
-} = createScene(refWindow, init)
 </script>
 
 <template>
@@ -103,11 +125,20 @@ const {
         </div>
 
         <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+    </div>
+    <div ref="refWindow" class="fullscreen">
+        <div ref="refSmartContract" :style="{ 
+            opacity: 1,
+        }" class="node">
+            <img src="@/assets/contract.svg" alt="智能合约" :width="smartContract.size">
+        </div>
 
+    </div>
+    <div ref="refWindow" class="fullscreen">
         <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" :disabled="running" />
     </div>
 </template>
-    
+
 <style scoped>
 .fullscreen {
     position: fixed;

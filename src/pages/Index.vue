@@ -41,6 +41,5 @@ const scenarios = getScenarios();
 
 .image {
     height: 180px;
-
 }
 </style>
