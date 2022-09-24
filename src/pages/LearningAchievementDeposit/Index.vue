@@ -5,7 +5,7 @@ import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
 import { smartContract } from "@/common/settings";
-import { moveTo } from "@/common/animate";
+import { moveTo, fadeOut } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
 import Steps from "@/components/Steps.vue";
@@ -59,17 +59,20 @@ const {
 
 
 const refSmartContract = ref<HTMLElement | null>(null);
+const refLearningRecords = ref<HTMLElement | null>(null);
+const refLearningRecordsCopy = ref<HTMLElement | null>(null);
+const refVerifyRecords = ref<HTMLElement | null>(null);
 
 const steps: Step[] = [
     {
-        title: '部署导入学习成果的智能合约',
+        title: '学分银行部署智能合约',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
-                const institutions = nodes.value.filter(node => node.role === 'institution')
-                if (institutions.length === 0) {
+                const banks = nodes.value.filter(node => node.role === 'bank')
+                if (banks.length === 0) {
                     reject(1);
                 }
-                const pos = institutions[0];
+                const pos = banks[0];
                 const div = refSmartContract.value as HTMLDivElement;
                 div.style.left = pos.x + 'px';
                 div.style.top = pos.y + 'px';
@@ -83,36 +86,117 @@ const steps: Step[] = [
 
                 refSmartContract.value && moveTo(refSmartContract.value, {
                     x: block.x,
-                    y: block.y,
+                    y: block.y - 64,
                 }, () => resolve(1))
             })
         }
     },
     {
-        title: 'Second',
+        title: '个体公开学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log('inside setTimeout');
-                    resolve(1);
-                }, 1000)
+                const users = nodes.value.filter(node => node.role === 'user')
+                if (users.length === 0) {
+                    reject(1);
+                }
+                const pos = users[0];
+                const div = refLearningRecords.value as HTMLDivElement;
+                div.style.left = pos.x + 'px';
+                div.style.top = pos.y + 'px';
+                div.style.opacity = '1';
+
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+                const block = blocks[2];
+
+                refLearningRecords.value && moveTo(refLearningRecords.value, {
+                    x: block.x,
+                    y: block.y - 64,
+                }, () => resolve(1))
             })
         }
     },
     {
-        title: 'Last',
+        title: '机构验证学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log('inside setTimeout');
-                    resolve(1);
-                }, 1000)
+                const recordDiv = refLearningRecords.value as HTMLDivElement;
+                const recordDivCopy = refLearningRecordsCopy.value as HTMLDivElement;
+                recordDivCopy.style.left = recordDiv.style.left;
+                recordDivCopy.style.top = recordDiv.style.top;
+                recordDivCopy.style.opacity = '1';
+
+                const institutions = nodes.value.filter(node => node.role === 'institution')
+                if (institutions.length === 0) {
+                    reject(1);
+                }
+                const institution = institutions[0];
+
+                refLearningRecordsCopy.value && moveTo(refLearningRecordsCopy.value, {
+                    x: institution.x,
+                    y: institution.y - 64,
+                }, () => {
+                    const verifyRecords = refVerifyRecords.value as HTMLDivElement;
+                    verifyRecords.style.left = institution.x + 'px';
+                    verifyRecords.style.top =  institution.y + 'px';
+                    verifyRecords.style.opacity = '1';
+
+                    const blocks = nodes.value.filter(node => node.role === 'block')
+                    if (blocks.length === 0) {
+                        reject(1);
+                    }
+                    const block = blocks[1];
+
+                    refLearningRecordsCopy.value && fadeOut(refLearningRecordsCopy.value);
+                    refVerifyRecords.value && moveTo(refVerifyRecords.value, {
+                        x: block.x,
+                        y: block.y - 64,
+                    }, () => resolve(1));
+                })
+            })
+        }
+    },
+    {
+        title: '经过智能合约验证后导入学分银行',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                const banks = nodes.value.filter(node => node.role === 'bank')
+                if (banks.length === 0) {
+                    reject(1);
+                }
+                const bank = banks[0];
+
+                const smartContract = refSmartContract.value as HTMLDivElement;
+                const x = parseInt(smartContract.style.left);
+                const y = parseInt(smartContract.style.top);
+
+                let count = 0;
+                const finish = () => {
+                    count += 1;
+                    if (count === 2) {
+                        refLearningRecords.value && moveTo(refLearningRecords.value, {
+                            x: bank.x,
+                            y: bank.y - 64,
+                        }, () => resolve(1));
+                    }
+                }
+
+                refLearningRecords.value && moveTo(refLearningRecords.value, {
+                    x: x + 64 + 64,
+                    y,
+                }, finish);
+
+                refVerifyRecords.value && moveTo(refVerifyRecords.value, {
+                    x: x + 64,
+                    y,
+                }, finish);
             })
         }
     },
 ]
-const { running, currentStep, nextStep } = genSteps(steps);
-
+const { running, currentStep, nextStep, pauseLoop } = genSteps(steps, 1);
 </script>
 
 <template>
@@ -127,15 +211,26 @@ const { running, currentStep, nextStep } = genSteps(steps);
         <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
     </div>
     <div ref="refWindow" class="fullscreen">
-        <div ref="refSmartContract" :style="{ 
-            opacity: 1,
-        }" class="node">
+
+        <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
             <img src="@/assets/contract.svg" alt="智能合约" :width="smartContract.size">
+        </div>
+
+        <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
+            <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+        </div>
+
+        <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
+            <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+        </div>
+
+        <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
+            <img src="@/assets/verify.svg" alt="验证学习成果" :width="smartContract.size">
         </div>
 
     </div>
     <div ref="refWindow" class="fullscreen">
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" :disabled="running" />
+        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @pause="pauseLoop" :disabled="running"/>
     </div>
 </template>
 

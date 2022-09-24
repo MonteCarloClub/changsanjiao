@@ -3,7 +3,7 @@ import { PropType } from "vue";
 
 import { Step } from "@/common/step";
 
-const emit = defineEmits(['nextstep']);
+const emit = defineEmits(['nextstep', 'pause']);
 defineProps({
     current: {
         type: Number,
@@ -27,6 +27,7 @@ defineProps({
         </a-steps>
         <div class="steps-action">
             <a-button type="primary" @click="emit('nextstep')" :disabled="disabled"> 下一步 </a-button>
+            <a-button type="primary" @click="emit('pause')" :disabled="!disabled"> 暂停 </a-button>
         </div>
     </div>
 </template>
@@ -41,7 +42,9 @@ defineProps({
 }
 
 .steps-action {
-    text-align: center;
     padding-top: 36px;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
 }
 </style>
