@@ -7,13 +7,13 @@ export const scenarios = {
     title: "学习成果上链",
     image: ladImage,
   },
-  jar: {
-    title: "招聘/求职场景",
-    image: jarImage,
-  },
   act: {
     title: "学分转换场景",
     image: actImage,
+  },
+  jar: {
+    title: "求职/招聘场景",
+    image: jarImage,
   },
 };
 

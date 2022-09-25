@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { stepInterval } from "@/common/settings";
 
 export type Step = {
@@ -11,21 +11,24 @@ export function genSteps(steps: Step[], loopBegin: number) {
   const running = ref<boolean>(false);
   const auto = ref<boolean>(true);
 
+  let timer: NodeJS.Timeout;
+
   const nextStep = () => {
     running.value = true;
     if (currentStep.value === steps.length) {
       currentStep.value = loopBegin;
     }
-    steps[currentStep.value].handler().then(() => {
-      currentStep.value += 1;
-      running.value = false;
-      // 如果是自动播放
-      if (auto.value) {
-        setTimeout(() => {
+
+    timer = setTimeout(() => {
+      steps[currentStep.value].handler().then(() => {
+        currentStep.value += 1;
+        running.value = false;
+        // 如果是自动播放
+        if (auto.value) {
           nextStep();
-        }, stepInterval);
-      }
-    });
+        }
+      });
+    }, stepInterval);
   };
 
   const toggleAuto = () => {
@@ -33,13 +36,22 @@ export function genSteps(steps: Step[], loopBegin: number) {
     if (auto.value) {
       nextStep();
     }
-  }
+  };
+
+  onMounted(() => {
+    auto.value && nextStep();
+  });
+
+  onUnmounted(() => {
+    auto.value = false;
+    clearTimeout(timer);
+  });
 
   return {
     auto,
     running,
     currentStep,
     nextStep,
-    toggleAuto
+    toggleAuto,
   };
 }

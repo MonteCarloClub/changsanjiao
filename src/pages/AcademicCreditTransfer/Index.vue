@@ -12,46 +12,50 @@ const init: Node[] = [
     {
         x: 20,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 40,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 60,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 80,
         y: 40,
-        role: 'block'
+        role: 'block',
+        title: '区块'
     },
     {
         x: 20,
         y: 70,
         role: 'institution',
-        title: '机构'
+        title: '上海市教育机构'
     },
     {
         x: 80,
         y: 70,
         role: 'institution',
-        title: '机构'
+        title: '苏州市教育机构'
     },
     {
         x: 40,
         y: 20,
         role: 'bank',
-        title: '学分银行'
+        title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
     {
         x: 80,
         y: 20,
         role: 'user',
-        title: '个体'
+        title: '学习者'
     },
 ]
 
@@ -98,10 +102,7 @@ const steps: Step[] = [
         }
     },
 ]
-const { auto, running, currentStep, nextStep, toggleAuto } = genSteps(steps, 1);
-onMounted(() => {
-    auto.value && nextStep();
-})
+const { running, currentStep } = genSteps(steps, 1);
 </script>
         
 <template>
@@ -123,8 +124,7 @@ onMounted(() => {
     </div>
     
     <div class="footer">
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @toggle="toggleAuto" :disabled="running"
-            :auto="auto" />
+        <Steps :current="currentStep" :steps="steps" :disabled="running"/>
     </div>
 </template>
             

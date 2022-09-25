@@ -35,7 +35,7 @@ const init: Node[] = [
         x: 25,
         y: 20,
         role: 'user',
-        title: '个体'
+        title: '学习者'
     },
     {
         x: 75,
@@ -47,13 +47,13 @@ const init: Node[] = [
         x: 50,
         y: 20,
         role: 'institution',
-        title: '机构'
+        title: '发证机构'
     },
     {
         x: 25,
         y: 80,
         role: 'bank',
-        title: '学分银行'
+        title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
 ]
 
@@ -280,10 +280,7 @@ const steps: Step[] = [
         }
     },
 ]
-const { auto, running, currentStep, nextStep, toggleAuto } = genSteps(steps, 1);
-onMounted(() => {
-    auto.value && nextStep();
-})
+const { running, currentStep } = genSteps(steps, 1);
 </script>
     
 <template>
@@ -322,8 +319,7 @@ onMounted(() => {
     </div>
 
     <div class="footer">
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @toggle="toggleAuto" :disabled="running"
-            :auto="auto" />
+        <Steps :current="currentStep" :steps="steps" :disabled="running"/>
     </div>
 </template>
         

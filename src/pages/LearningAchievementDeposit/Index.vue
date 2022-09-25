@@ -8,6 +8,7 @@ import { icon } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
+import Item from "@/components/Item.vue";
 import Steps from "@/components/Steps.vue";
 import Blockchain from "@/components/Blockchain.vue";
 
@@ -34,19 +35,19 @@ const init: Node[] = [
         x: 85,
         y: 50,
         role: 'user',
-        title: '个体'
+        title: '学习者'
     },
     {
         x: 40,
         y: 80,
         role: 'institution',
-        title: '机构'
+        title: '发证机构'
     },
     {
         x: 40,
         y: 20,
         role: 'bank',
-        title: '学分银行'
+        title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
 ]
 
@@ -196,10 +197,7 @@ const steps: Step[] = [
         }
     },
 ]
-const { auto, running, currentStep, nextStep, toggleAuto } = genSteps(steps, 1);
-onMounted(() => {
-    auto.value && nextStep();
-})
+const { running, currentStep } = genSteps(steps, 1);
 </script>
 
 <template>
@@ -216,15 +214,15 @@ onMounted(() => {
         </div>
         <div class="fullscene">
             <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/contract.svg" alt="智能合约" :width="icon.size">
+                <Item type="contract" title="智能合约"/>
             </div>
 
             <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
+                <Item type="record" title="学习成果"/>
             </div>
 
             <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
+                <Item type="record" title="学习成果"/>
             </div>
 
             <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
@@ -233,8 +231,7 @@ onMounted(() => {
         </div>
     </div>
     <div class="footer">
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @toggle="toggleAuto" :disabled="running"
-            :auto="auto" />
+        <Steps :current="currentStep" :steps="steps" :disabled="running"/>
     </div>
 </template>
 
