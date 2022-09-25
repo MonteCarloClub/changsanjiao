@@ -61,7 +61,6 @@ const {
 
 const refSmartContract = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
-const refLearningRecordsCopy = ref<HTMLElement | null>(null);
 const refVerifyRecords = ref<HTMLElement | null>(null);
 
 const steps: Step[] = [
@@ -73,10 +72,10 @@ const steps: Step[] = [
                 if (banks.length === 0) {
                     reject(1);
                 }
-                const pos = banks[0];
+                const user = banks[0];
                 const div = refSmartContract.value as HTMLDivElement;
-                div.style.left = pos.x + 'px';
-                div.style.top = pos.y + 'px';
+                div.style.left = user.x + 'px';
+                div.style.top = user.y + 'px';
                 div.style.opacity = '1';
 
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -93,6 +92,64 @@ const steps: Step[] = [
         }
     },
     {
+        title: '个体授权机构公开学习成果',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                const users = nodes.value.filter(node => node.role === 'user')
+                if (users.length === 0) {
+                    reject(1);
+                }
+                const user = users[0];
+                const div = refLearningRecords.value as HTMLDivElement;
+                div.style.left = user.x + 'px';
+                div.style.top = user.y + 'px';
+                div.style.opacity = '1';
+
+                const institutions = nodes.value.filter(node => node.role === 'institution')
+                if (institutions.length === 0) {
+                    reject(1);
+                }
+                const institution = institutions[0];
+
+                refLearningRecords.value && moveTo(refLearningRecords.value, {
+                    x: institution.x,
+                    y: institution.y - 64,
+                }, () => resolve(1))
+            })
+        }
+    },
+    {
+        title: '机构验证后公开学习成果上链',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                const learningRecords = refLearningRecords.value as HTMLDivElement;
+                const verifyRecords = refVerifyRecords.value as HTMLDivElement;
+                verifyRecords.style.left = learningRecords.style.left;
+                verifyRecords.style.top = learningRecords.style.top;
+                verifyRecords.style.opacity = '1';
+
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+                const block = blocks[1];
+
+                let count = 0;
+                const finish = () => {
+                    count += 1;
+                    count === 2 && resolve(1);
+                }
+
+                refVerifyRecords.value && moveTo(refVerifyRecords.value, {
+                    x: block.x,
+                    y: block.y - 64,
+                }, finish)
+
+                refLearningRecords.value && fadeOut(refLearningRecords.value, finish)
+            })
+        }
+    },
+    {
         title: '个体公开学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
@@ -100,10 +157,10 @@ const steps: Step[] = [
                 if (users.length === 0) {
                     reject(1);
                 }
-                const pos = users[0];
+                const user = users[0];
                 const div = refLearningRecords.value as HTMLDivElement;
-                div.style.left = pos.x + 'px';
-                div.style.top = pos.y + 'px';
+                div.style.left = user.x + 'px';
+                div.style.top = user.y + 'px';
                 div.style.opacity = '1';
 
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -116,46 +173,6 @@ const steps: Step[] = [
                     x: block.x,
                     y: block.y - 64,
                 }, () => resolve(1))
-            })
-        }
-    },
-    {
-        title: '机构验证学习成果',
-        handler: (): Promise<any> => {
-            return new Promise((resolve, reject) => {
-                const recordDiv = refLearningRecords.value as HTMLDivElement;
-                const recordDivCopy = refLearningRecordsCopy.value as HTMLDivElement;
-                recordDivCopy.style.left = recordDiv.style.left;
-                recordDivCopy.style.top = recordDiv.style.top;
-                recordDivCopy.style.opacity = '1';
-
-                const institutions = nodes.value.filter(node => node.role === 'institution')
-                if (institutions.length === 0) {
-                    reject(1);
-                }
-                const institution = institutions[0];
-
-                refLearningRecordsCopy.value && moveTo(refLearningRecordsCopy.value, {
-                    x: institution.x,
-                    y: institution.y - 64,
-                }, () => {
-                    const verifyRecords = refVerifyRecords.value as HTMLDivElement;
-                    verifyRecords.style.left = institution.x + 'px';
-                    verifyRecords.style.top = institution.y + 'px';
-                    verifyRecords.style.opacity = '1';
-
-                    const blocks = nodes.value.filter(node => node.role === 'block')
-                    if (blocks.length === 0) {
-                        reject(1);
-                    }
-                    const block = blocks[1];
-
-                    refLearningRecordsCopy.value && fadeOut(refLearningRecordsCopy.value);
-                    refVerifyRecords.value && moveTo(refVerifyRecords.value, {
-                        x: block.x,
-                        y: block.y - 64,
-                    }, () => resolve(1));
-                })
             })
         }
     },
@@ -185,14 +202,31 @@ const steps: Step[] = [
                 }
 
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
-                    x: x + 64 + 64,
+                    x: x + 128 + 64,
                     y,
                 }, finish);
 
                 refVerifyRecords.value && moveTo(refVerifyRecords.value, {
-                    x: x + 64,
+                    x: x + 96,
                     y,
                 }, finish);
+            })
+        }
+    },
+    {
+        title: '从学分银行中访问学习成果',
+        handler: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+                const users = nodes.value.filter(node => node.role === 'user')
+                if (users.length === 0) {
+                    reject(1);
+                }
+                const user = users[0];
+
+                refLearningRecords.value && moveTo(refLearningRecords.value, {
+                    x: user.x,
+                    y: user.y - 64,
+                }, () => { resolve(1) });
             })
         }
     },
@@ -214,24 +248,20 @@ const { running, currentStep } = genSteps(steps, 1);
         </div>
         <div class="fullscene">
             <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <Item type="contract" title="智能合约"/>
+                <Item type="contract" title="智能合约" />
             </div>
 
             <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果"/>
-            </div>
-
-            <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果"/>
+                <Item type="record" title="学习成果" />
             </div>
 
             <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/verify.svg" alt="验证学习成果" :width="icon.size">
+                <Item type="credential" title="学习成果证明" />
             </div>
         </div>
     </div>
     <div class="footer">
-        <Steps :current="currentStep" :steps="steps" :disabled="running"/>
+        <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
 </template>
 

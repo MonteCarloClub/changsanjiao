@@ -35,25 +35,25 @@ const init: Node[] = [
     },
     {
         x: 20,
-        y: 70,
+        y: 80,
         role: 'institution',
         title: '上海市教育机构'
     },
     {
         x: 80,
-        y: 70,
+        y: 80,
         role: 'institution',
         title: '苏州市教育机构'
     },
     {
         x: 40,
-        y: 20,
+        y: 10,
         role: 'bank',
         title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
     {
         x: 80,
-        y: 20,
+        y: 10,
         role: 'user',
         title: '学习者'
     },
