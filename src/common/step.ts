@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import { stepInterval } from "@/common/settings";
 
 export type Step = {
   title: string;
@@ -20,7 +21,9 @@ export function genSteps(steps: Step[], loopBegin: number) {
       running.value = false;
       // 如果是自动播放
       if (auto.value) {
-        nextStep();
+        setTimeout(() => {
+          nextStep();
+        }, stepInterval);
       }
     });
   };

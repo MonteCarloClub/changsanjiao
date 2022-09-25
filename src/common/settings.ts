@@ -19,6 +19,8 @@ export const blockchainNetSettings = {
     signalColor: "hsl(217, 87%, 32%)"
 }
 
-export const smartContract = {
+export const icon = {
     size: 32,
 };
+
+export const stepInterval = 1000;

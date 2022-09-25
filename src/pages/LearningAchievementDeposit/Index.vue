@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { smartContract } from "@/common/settings";
+import { icon } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
@@ -216,19 +216,19 @@ onMounted(() => {
         </div>
         <div class="fullscene">
             <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/contract.svg" alt="智能合约" :width="smartContract.size">
+                <img src="@/assets/contract.svg" alt="智能合约" :width="icon.size">
             </div>
 
             <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
             </div>
 
             <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
             </div>
 
             <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/verify.svg" alt="验证学习成果" :width="smartContract.size">
+                <img src="@/assets/verify.svg" alt="验证学习成果" :width="icon.size">
             </div>
         </div>
     </div>
