@@ -8,6 +8,7 @@ import { icon } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
+import Item from "@/components/Item.vue";
 import Steps from "@/components/Steps.vue";
 import Blockchain from "@/components/Blockchain.vue";
 
@@ -76,6 +77,7 @@ const steps: Step[] = [
         title: '学分银行部署智能合约',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
+
                 const banks = nodes.value.filter(node => node.role === 'bank')
                 if (banks.length === 0) {
                     reject(1);
@@ -103,6 +105,10 @@ const steps: Step[] = [
         title: '个体授权机构验证并上传学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
+
+                // 学习成果副本消失
+                refLearningRecordsCopy.value && fadeOut(refLearningRecordsCopy.value);
+
                 const users = nodes.value.filter(node => node.role === 'user')
                 if (users.length === 0) {
                     reject(1);
@@ -297,29 +303,30 @@ const { running, currentStep } = genSteps(steps, 1);
         </div>
         <div class="fullscene">
             <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/contract.svg" alt="智能合约" :width="icon.size">
+                <Item type="contract" title="智能合约" />
             </div>
 
             <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
+                <Item type="record" title="学习成果" />
             </div>
 
             <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/verify.svg" alt="验证学习成果" :width="icon.size">
+                <Item type="credential" title="学习成果证明" />
             </div>
 
             <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/records.svg" alt="学习成果" :width="icon.size">
+                <Item type="record" title="学习成果" />
             </div>
 
             <div ref="refLearningRecordAddress" :style="{ opacity: 0 }" class="node">
-                <img src="@/assets/address.svg" alt="学习成果地址" :width="icon.size">
+                <Item type="address" title="学习成果地址" />
             </div>
+
         </div>
     </div>
 
     <div class="footer">
-        <Steps :current="currentStep" :steps="steps" :disabled="running"/>
+        <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
 </template>
         
