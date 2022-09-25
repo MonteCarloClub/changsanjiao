@@ -5,7 +5,7 @@ const scenarios = getScenarios();
 </script>
 
 <template>
-    <div class="container">
+    <div class="card-list">
         <div class="flex-item" v-for="scenario in scenarios">
             <a-card hoverable style="width: 240px; margin: auto;">
                 <template #cover>
@@ -24,18 +24,19 @@ const scenarios = getScenarios();
 </template>
 
 <style scoped>
-.container {
+.card-list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    margin: 160px auto;
+    margin: auto;
     max-width: 840px;
 }
 
 .flex-item {
     flex: 1;
-    min-width: 240px;
+    padding: 20px;
+    min-width: 260px;
     max-width: 480px;
 }
 

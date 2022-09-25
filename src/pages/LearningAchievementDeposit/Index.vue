@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
@@ -14,31 +14,31 @@ import Blockchain from "@/components/Blockchain.vue";
 const init: Node[] = [
     {
         x: 15,
-        y: 40,
+        y: 50,
         role: 'block',
         title: '区块'
     },
     {
         x: 40,
-        y: 40,
+        y: 50,
         role: 'block',
         title: '区块'
     },
     {
         x: 65,
-        y: 40,
+        y: 50,
         role: 'block',
         title: '区块'
     },
     {
         x: 85,
-        y: 40,
+        y: 50,
         role: 'user',
         title: '个体'
     },
     {
         x: 40,
-        y: 60,
+        y: 80,
         role: 'institution',
         title: '机构'
     },
@@ -140,7 +140,7 @@ const steps: Step[] = [
                 }, () => {
                     const verifyRecords = refVerifyRecords.value as HTMLDivElement;
                     verifyRecords.style.left = institution.x + 'px';
-                    verifyRecords.style.top =  institution.y + 'px';
+                    verifyRecords.style.top = institution.y + 'px';
                     verifyRecords.style.opacity = '1';
 
                     const blocks = nodes.value.filter(node => node.role === 'block')
@@ -196,51 +196,65 @@ const steps: Step[] = [
         }
     },
 ]
-const { running, currentStep, nextStep, pauseLoop } = genSteps(steps, 1);
+const { auto, running, currentStep, nextStep, toggleAuto } = genSteps(steps, 1);
+onMounted(() => {
+    auto.value && nextStep();
+})
 </script>
 
 <template>
-    <div ref="refWindow" class="fullscreen">
-        <div class="node" v-for="node, i in nodes" :style="{
-          left: node.x + 'px',
-          top: node.y + 'px'
-        }">
-            <Role :role="node.role" :title="node.title" />
-        </div>
+    <div class="scene" ref="refWindow">
+        <div class="fullscene">
+            <div class="node" v-for="node, i in nodes" :style="{
+              left: node.x + 'px',
+              top: node.y + 'px'
+            }">
+                <Role :role="node.role" :title="node.title" />
+            </div>
 
-        <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+            <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+        </div>
+        <div class="fullscene">
+            <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
+                <img src="@/assets/contract.svg" alt="智能合约" :width="smartContract.size">
+            </div>
+
+            <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
+                <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+            </div>
+
+            <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
+                <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
+            </div>
+
+            <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
+                <img src="@/assets/verify.svg" alt="验证学习成果" :width="smartContract.size">
+            </div>
+        </div>
     </div>
-    <div ref="refWindow" class="fullscreen">
-
-        <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-            <img src="@/assets/contract.svg" alt="智能合约" :width="smartContract.size">
-        </div>
-
-        <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-            <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
-        </div>
-
-        <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-            <img src="@/assets/records.svg" alt="学习成果" :width="smartContract.size">
-        </div>
-
-        <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-            <img src="@/assets/verify.svg" alt="验证学习成果" :width="smartContract.size">
-        </div>
-
-    </div>
-    <div ref="refWindow" class="fullscreen">
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @pause="pauseLoop" :disabled="running"/>
+    <div class="footer">
+        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @toggle="toggleAuto" :disabled="running"
+            :auto="auto" />
     </div>
 </template>
 
 <style scoped>
-.fullscreen {
-    position: fixed;
+.scene {
+    flex: 1;
+    position: relative;
+}
+
+.fullscene {
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+.footer {
+    height: 120px;
+    flex: none;
 }
 
 .node {

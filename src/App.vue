@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="container">
     <router-view></router-view>
   </div>
 </template>
@@ -20,5 +20,17 @@ watch(
 
 </script>
 
-<style>
+<style scoped>
+#app .container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
 </style>

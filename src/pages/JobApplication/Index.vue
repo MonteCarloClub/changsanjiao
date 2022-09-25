@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { genSteps,Step } from "@/common/step";
+import { genSteps, Step } from "@/common/step";
 
 import Role from "@/components/Role.vue";
 import Steps from "@/components/Steps.vue";
@@ -13,17 +13,17 @@ import Blockchain from "@/components/Blockchain.vue";
 const init: Node[] = [
     {
         x: 25,
-        y: 40,
+        y: 50,
         role: 'block'
     },
     {
         x: 50,
-        y: 40,
+        y: 50,
         role: 'block'
     },
     {
         x: 75,
-        y: 40,
+        y: 50,
         role: 'block'
     },
     {
@@ -34,7 +34,7 @@ const init: Node[] = [
     },
     {
         x: 75,
-        y: 60,
+        y: 80,
         role: 'user',
         title: '招聘人员'
     },
@@ -46,7 +46,7 @@ const init: Node[] = [
     },
     {
         x: 25,
-        y: 60,
+        y: 80,
         role: 'bank',
         title: '学分银行'
     },
@@ -94,31 +94,53 @@ const steps: Step[] = [
         }
     },
 ]
-const { running, currentStep, nextStep } = genSteps(steps)
+const { auto, running, currentStep, nextStep, toggleAuto } = genSteps(steps, 1);
+onMounted(() => {
+    auto.value && nextStep();
+})
 </script>
     
 <template>
-    <div ref="refWindow" class="fullscreen">
-        <div class="node" v-for="node, i in nodes" :style="{
-          left: node.x + 'px',
-          top: node.y + 'px'
-        }">
-            <Role :role="node.role" :title="node.title" />
+    <div class="scene" ref="refWindow">
+        <div class="fullscene">
+            <div class="node" v-for="node, i in nodes" :style="{
+              left: node.x + 'px',
+              top: node.y + 'px'
+            }">
+                <Role :role="node.role" :title="node.title" />
+            </div>
+
+            <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
         </div>
 
-        <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+        <div class="fullscene">
 
-        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" :disabled="running"/>
+        </div>
+    </div>
+
+    <div class="footer">
+        <Steps :current="currentStep" :steps="steps" @nextstep="nextStep" @toggle="toggleAuto" :disabled="running"
+            :auto="auto" />
     </div>
 </template>
         
 <style scoped>
-.fullscreen {
-    position: fixed;
+.scene {
+    flex: 1;
+    position: relative;
+}
+
+.fullscene {
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+.footer {
+    height: 120px;
+    flex: none;
 }
 
 .node {

@@ -11,7 +11,6 @@ export function genSteps(steps: Step[], loopBegin: number) {
   const auto = ref<boolean>(true);
 
   const nextStep = () => {
-    auto.value = true;
     running.value = true;
     if (currentStep.value === steps.length) {
       currentStep.value = loopBegin;
@@ -26,8 +25,11 @@ export function genSteps(steps: Step[], loopBegin: number) {
     });
   };
 
-  const pauseLoop = () => {
-    auto.value = false;
+  const toggleAuto = () => {
+    auto.value = !auto.value;
+    if (auto.value) {
+      nextStep();
+    }
   }
 
   return {
@@ -35,6 +37,6 @@ export function genSteps(steps: Step[], loopBegin: number) {
     running,
     currentStep,
     nextStep,
-    pauseLoop
+    toggleAuto
   };
 }
