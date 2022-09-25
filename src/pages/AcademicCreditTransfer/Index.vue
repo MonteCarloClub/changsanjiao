@@ -45,7 +45,7 @@ const init: Node[] = [
     {
         x: 80,
         y: 80,
-        role: 'institution',
+        role: 'institutionBlue',
         title: '苏州市教育机构'
     },
     {
@@ -213,11 +213,11 @@ const steps: Step[] = [
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 // 找到第二个机构
-                const institutions = nodes.value.filter(node => node.role === 'institution')
+                const institutions = nodes.value.filter(node => node.role === 'institutionBlue')
                 if (institutions.length === 0) {
                     reject(1);
                 }
-                const institution = institutions[1];
+                const institution = institutions[0];
 
                 const verifyRecordsDiv = refVerifyRecords.value as HTMLDivElement;
                 verifyRecordsDiv.style.left = institution.x + 'px';
@@ -291,7 +291,7 @@ const { running, currentStep } = genSteps(steps, 1);
 
 
             <div ref="refTransferedLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="转换后的学习成果" />
+                <Item type="transferred" title="转换后的学习成果" />
             </div>
         </div>
     </div>

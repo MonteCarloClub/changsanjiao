@@ -311,7 +311,7 @@ const { running, currentStep } = genSteps(steps, 1);
             </div>
 
             <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="credential" title="学习成果证明" />
+                <Item type="credential" title="成果证明" />
             </div>
 
             <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">

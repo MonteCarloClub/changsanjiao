@@ -23,4 +23,4 @@ export const icon = {
     size: 32,
 };
 
-export const stepInterval = 500;
+export const stepInterval = 2000;
