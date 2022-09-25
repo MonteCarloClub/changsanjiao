@@ -17,7 +17,7 @@ export const roleIcons = {
     bank,
     user,
     block,
-    institution
+    institution,
 }
 
 /**

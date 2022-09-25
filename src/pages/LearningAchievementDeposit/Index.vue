@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
+import { moveTo, fadeOut } from "@/common/animate";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { icon } from "@/common/settings";
-import { moveTo, fadeOut } from "@/common/animate";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
@@ -100,10 +99,10 @@ const steps: Step[] = [
                     reject(1);
                 }
                 const user = users[0];
-                const div = refLearningRecords.value as HTMLDivElement;
-                div.style.left = user.x + 'px';
-                div.style.top = user.y + 'px';
-                div.style.opacity = '1';
+                const learningRecordDiv = refLearningRecords.value as HTMLDivElement;
+                learningRecordDiv.style.left = user.x + 'px';
+                learningRecordDiv.style.top = user.y + 'px';
+                learningRecordDiv.style.opacity = '1';
 
                 const institutions = nodes.value.filter(node => node.role === 'institution')
                 if (institutions.length === 0) {

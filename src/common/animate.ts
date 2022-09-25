@@ -47,6 +47,17 @@ export function fadeOut(
   });
 }
 
+export function fadeIn(
+  element: HTMLElement,
+  cb?: () => void
+) {
+  anime({
+    targets: element,
+    opacity: 1,
+    complete: cb,
+  });
+}
+
 export function enlargeIn(
   element: HTMLElement,
   cb?: () => void
