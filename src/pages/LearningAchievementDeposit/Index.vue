@@ -5,6 +5,7 @@ import { moveTo, fadeOut } from "@/common/animate";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
@@ -19,13 +20,7 @@ const init: Node[] = [
         title: '区块'
     },
     {
-        x: 40,
-        y: 50,
-        role: 'block',
-        title: '区块'
-    },
-    {
-        x: 65,
+        x: 50,
         y: 50,
         role: 'block',
         title: '区块'
@@ -33,18 +28,24 @@ const init: Node[] = [
     {
         x: 85,
         y: 50,
+        role: 'block',
+        title: '区块'
+    },
+    {
+        x: 85,
+        y: 90,
         role: 'user',
         title: '学习者'
     },
     {
-        x: 40,
-        y: 80,
+        x: 50,
+        y: 90,
         role: 'institution',
         title: '发证机构'
     },
     {
-        x: 40,
-        y: 20,
+        x: 50,
+        y: 10,
         role: 'bank',
         title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
@@ -91,7 +92,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '个体授权机构公开学习成果',
+        title: '学习者授权机构公开学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -149,7 +150,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '个体公开学习成果',
+        title: '学习者公开学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -234,33 +235,38 @@ const { running, currentStep } = genSteps(steps, 1);
 </script>
 
 <template>
-    <div class="scene" ref="refWindow">
-        <div class="fullscene">
-            <div class="node" v-for="node, i in nodes" :style="{
-              left: node.x + 'px',
-              top: node.y + 'px'
-            }">
-                <Role :role="node.role" :title="node.title" />
-            </div>
-
-            <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
-        </div>
-        <div class="fullscene">
-            <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <Item type="contract" title="智能合约" />
-            </div>
-
-            <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果" />
-            </div>
-
-            <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="credential" title="学习成果证明" />
-            </div>
-        </div>
-    </div>
     <div class="footer">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
+    </div>
+    <div style="overflow: auto; flex: 1;">
+        <div class="scene" ref="refWindow" :style="{
+            minWidth: minCanvasWidth + 'px',
+            minHeight: minCanvasHeight + 'px'
+        }">
+            <div class="fullscene">
+                <div class="node" v-for="node, i in nodes" :style="{
+                  left: node.x + 'px',
+                  top: node.y + 'px'
+                }">
+                    <Role :role="node.role" :title="node.title" />
+                </div>
+
+                <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+            </div>
+            <div class="fullscene">
+                <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
+                    <Item type="contract" title="智能合约" />
+                </div>
+
+                <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="record" title="学习成果" />
+                </div>
+
+                <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="credential" title="学习成果证明" />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -268,6 +274,7 @@ const { running, currentStep } = genSteps(steps, 1);
 .scene {
     flex: 1;
     position: relative;
+    height: 100%;
 }
 
 .fullscene {
@@ -279,8 +286,8 @@ const { running, currentStep } = genSteps(steps, 1);
 }
 
 .footer {
-    height: 120px;
     flex: none;
+    overflow-y: auto;
 }
 
 .node {

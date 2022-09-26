@@ -32,6 +32,7 @@ export function moveTo(
     left: destination.x,
     top: destination.y,
     easing: 'easeInOutExpo',
+    duration: 3000,
     complete: cb,
   });
 }
@@ -69,3 +70,16 @@ export function enlargeIn(
   });
 }
 
+export function expandToLeft(
+  element: HTMLElement,
+  destination: { x: number },
+  cb?: () => void
+) {
+  anime({
+    targets: element,
+    left: destination.x,
+    easing: 'easeInOutExpo',
+    duration: 3000,
+    complete: cb,
+  });
+}

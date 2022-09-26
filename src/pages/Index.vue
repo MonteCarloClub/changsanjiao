@@ -7,7 +7,7 @@ const scenarios = getScenarios();
 <template>
     <div class="index">
         <div class="title">
-            长三角学分银行
+            长三角学分银行应用场景演示
         </div>
         <div class="card-list">
             <div class="flex-item" v-for="scenario in scenarios">

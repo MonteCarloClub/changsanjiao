@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
 import { genSteps, Step } from "@/common/step";
-import { icon } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
@@ -15,7 +15,7 @@ import Blockchain from "@/components/Blockchain.vue";
 
 const init: Node[] = [
     {
-        x: 25,
+        x: 10,
         y: 50,
         role: 'block',
         title: '区块'
@@ -27,32 +27,32 @@ const init: Node[] = [
         title: '区块'
     },
     {
-        x: 75,
+        x: 90,
         y: 50,
         role: 'block',
         title: '区块'
     },
     {
-        x: 25,
-        y: 20,
+        x: 10,
+        y: 10,
         role: 'user',
         title: '学习者'
     },
     {
-        x: 75,
-        y: 80,
+        x: 90,
+        y: 90,
         role: 'user',
         title: '招聘单位HR'
     },
     {
         x: 50,
-        y: 20,
+        y: 10,
         role: 'institution',
         title: '发证机构'
     },
     {
-        x: 25,
-        y: 80,
+        x: 10,
+        y: 90,
         role: 'bank',
         title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
@@ -102,7 +102,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '个体授权机构验证并上传学习成果',
+        title: '学习者授权机构验证并上传学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
 
@@ -113,7 +113,7 @@ const steps: Step[] = [
                 if (users.length === 0) {
                     reject(1);
                 }
-                // 学习成果从个体出发
+                // 学习成果从学习者出发
                 const user = users[0];
                 const learningRecordsDiv = refLearningRecords.value as HTMLDivElement;
                 learningRecordsDiv.style.left = user.x + 'px';
@@ -135,7 +135,7 @@ const steps: Step[] = [
                     }
                 }
 
-                // 学习成果从个体到机构
+                // 学习成果从学习者到机构
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: institution.x - 64,
                     y: institution.y,
@@ -175,7 +175,7 @@ const steps: Step[] = [
                 if (users.length === 0) {
                     reject(1);
                 }
-                // 学习成果地址从个体出发
+                // 学习成果链上地址从学习者出发
                 const user = users[0];
                 const learningRecordAddressDiv = refLearningRecordAddress.value as HTMLDivElement;
                 learningRecordAddressDiv.style.left = (user.x - 64) + 'px';
@@ -210,7 +210,7 @@ const steps: Step[] = [
                     }
                 }
 
-                // 学习成果地址消失
+                // 学习成果链上地址消失
                 refLearningRecordAddress.value && fadeOut(refLearningRecordAddress.value, finish);
 
                 // 获取第一个区块
@@ -235,7 +235,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '招聘人员获取学习成果并验证',
+        title: '招聘单位HR获取学习成果并验证',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 // 获取第三个区块
@@ -290,43 +290,48 @@ const { running, currentStep } = genSteps(steps, 1);
 </script>
     
 <template>
-    <div class="scene" ref="refWindow">
-        <div class="fullscene">
-            <div class="node" v-for="node, i in nodes" :style="{
-              left: node.x + 'px',
-              top: node.y + 'px'
-            }">
-                <Role :role="node.role" :title="node.title" />
-            </div>
-
-            <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
-        </div>
-        <div class="fullscene">
-            <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <Item type="contract" title="智能合约" />
-            </div>
-
-            <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果" />
-            </div>
-
-            <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="credential" title="成果证明" />
-            </div>
-
-            <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果" />
-            </div>
-
-            <div ref="refLearningRecordAddress" :style="{ opacity: 0 }" class="node">
-                <Item type="address" title="学习成果地址" />
-            </div>
-
-        </div>
-    </div>
-
     <div class="footer">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
+    </div>
+
+    <div style="overflow: auto; flex: 1;">
+        <div class="scene" ref="refWindow" :style="{
+            minWidth: minCanvasWidth + 'px',
+            minHeight: minCanvasHeight + 'px'
+        }">
+            <div class="fullscene">
+                <div class="node" v-for="node, i in nodes" :style="{
+                  left: node.x + 'px',
+                  top: node.y + 'px'
+                }">
+                    <Role :role="node.role" :title="node.title" />
+                </div>
+
+                <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+            </div>
+            <div class="fullscene">
+                <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
+                    <Item type="contract" title="智能合约" />
+                </div>
+
+                <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="record" title="学习成果" />
+                </div>
+
+                <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="credential" title="成果证明" />
+                </div>
+
+                <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
+                    <Item type="record" title="学习成果" />
+                </div>
+
+                <div ref="refLearningRecordAddress" :style="{ opacity: 0 }" class="node">
+                    <Item type="address" title="学习成果链上地址" />
+                </div>
+
+            </div>
+        </div>
     </div>
 </template>
         
@@ -334,6 +339,7 @@ const { running, currentStep } = genSteps(steps, 1);
 .scene {
     flex: 1;
     position: relative;
+    height: 100%;
 }
 
 .fullscene {
@@ -345,8 +351,8 @@ const { running, currentStep } = genSteps(steps, 1);
 }
 
 .footer {
-    height: 120px;
     flex: none;
+    overflow-y: auto;
 }
 
 .node {

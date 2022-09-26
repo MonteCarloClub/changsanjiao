@@ -26,8 +26,8 @@ defineProps({
     
 <template>
     <div class="steps">
-        <a-steps :current="current">
-            <a-step v-for="item in steps" :key="item.title" :title="item.title" />
+        <a-steps :current="current" direction="vertical">
+            <a-step v-for="item in steps" :key="item.title" :title="item.title" class="step"/>
         </a-steps>
         <!-- <div v-if="auto" class="steps-action">
             <a-button type="primary" @click="emit('toggle')"> 切换至单步模式 </a-button>
@@ -41,8 +41,9 @@ defineProps({
 
 <style scoped>
 .steps {
-    margin: 0 60px;
+    margin: 60px 0 0 60px;
     position: relative;
+    overflow-y: auto;
 }
 
 .steps-action {
@@ -59,5 +60,9 @@ defineProps({
 
 .image {
     width: 100%;
+}
+
+.step {
+    height: 100px;
 }
 </style>

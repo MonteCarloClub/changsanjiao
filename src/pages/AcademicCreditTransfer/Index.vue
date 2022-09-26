@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { moveTo, fadeOut, fadeIn } from "@/common/animate";
+import { moveTo, fadeOut, fadeIn, expandToLeft } from "@/common/animate";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
 import { genSteps, Step } from "@/common/step";
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
@@ -13,13 +14,13 @@ import Blockchain from "@/components/Blockchain.vue";
 
 const init: Node[] = [
     {
-        x: 20,
+        x: 10,
         y: 50,
         role: 'block',
         title: '区块'
     },
     {
-        x: 40,
+        x: 35,
         y: 50,
         role: 'block',
         title: '区块'
@@ -31,32 +32,32 @@ const init: Node[] = [
         title: '区块'
     },
     {
-        x: 80,
+        x: 85,
         y: 50,
         role: 'block',
         title: '区块'
     },
     {
-        x: 20,
-        y: 80,
+        x: 10,
+        y: 90,
         role: 'institution',
         title: '上海市教育机构'
     },
     {
-        x: 80,
-        y: 80,
-        role: 'institutionBlue',
-        title: '江苏省教育机构'
+        x: 85,
+        y: 90,
+        role: 'institution',
+        title: '浙江省教育机构'
     },
     {
-        x: 40,
-        y: 20,
+        x: 35,
+        y: 10,
         role: 'bank',
         title: '长三角学分银行（上海/江苏/浙江/安徽）'
     },
     {
-        x: 80,
-        y: 20,
+        x: 85,
+        y: 10,
         role: 'user',
         title: '学习者'
     },
@@ -70,6 +71,7 @@ const {
 } = createScene(refWindow, init)
 
 
+const refApplyArrow = ref<HTMLElement | null>(null);
 const refOffChainData = ref<HTMLElement | null>(null);
 const refTransferData = ref<HTMLElement | null>(null);
 const refSmartContract = ref<HTMLElement | null>(null);
@@ -135,7 +137,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '发起转换请求',
+        title: '发起转换申请',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const banks = nodes.value.filter(node => node.role === 'bank')
@@ -144,31 +146,21 @@ const steps: Step[] = [
                 }
                 const bank = banks[0];
 
-                const transferDataDiv = refTransferData.value as HTMLDivElement;
-                transferDataDiv.style.left = bank.x + 'px';
-                transferDataDiv.style.top = bank.y + 'px';
-                transferDataDiv.style.opacity = '1';
-
                 const users = nodes.value.filter(node => node.role === 'user')
                 if (users.length === 0) {
                     reject(1);
                 }
                 const user = users[0];
 
-                refTransferData.value && moveTo(refTransferData.value, {
-                    x: user.x,
-                    y: user.y,
-                }, () => {
-                    const blocks = nodes.value.filter(node => node.role === 'block')
-                    if (blocks.length === 0) {
-                        reject(1);
-                    }
-                    const block = blocks[3];
+                const applyArrowDiv = refApplyArrow.value as HTMLDivElement;
+                applyArrowDiv.style.right = screenWidth.value - user.x + 64 + 'px';
+                applyArrowDiv.style.top = user.y + 'px';
+                applyArrowDiv.style.opacity = '1';
 
-                    refTransferData.value && moveTo(refTransferData.value, {
-                        x: block.x,
-                        y: block.y - 64,
-                    }, () => { resolve(1) })
+                refApplyArrow.value && expandToLeft(refApplyArrow.value, {
+                    x: bank.x + 64,
+                }, () => {
+                    refApplyArrow.value && fadeOut(refApplyArrow.value, () => resolve(1))
                 })
             })
         }
@@ -213,11 +205,11 @@ const steps: Step[] = [
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 // 找到第二个机构
-                const institutions = nodes.value.filter(node => node.role === 'institutionBlue')
+                const institutions = nodes.value.filter(node => node.role === 'institution')
                 if (institutions.length === 0) {
                     reject(1);
                 }
-                const institution = institutions[0];
+                const institution = institutions[1];
 
                 const verifyRecordsDiv = refVerifyRecords.value as HTMLDivElement;
                 verifyRecordsDiv.style.left = institution.x + 'px';
@@ -227,6 +219,10 @@ const steps: Step[] = [
                 transferedRecordsDiv.style.left = institution.x + 96 + 'px';
                 transferedRecordsDiv.style.top = institution.y - 64 + 'px';
 
+                const transferDataDiv = refTransferData.value as HTMLDivElement;
+                transferDataDiv.style.left = institution.x + 'px';
+                transferDataDiv.style.top = institution.y - 64 + 'px';
+
                 // 数据过去后验证
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: institution.x - 64,
@@ -234,14 +230,12 @@ const steps: Step[] = [
                 }, () => {
                     refVerifyRecords.value && fadeIn(refVerifyRecords.value, () => {
                         refVerifyRecords.value && fadeOut(refVerifyRecords.value, () => {
-                            refTransferData.value && moveTo(refTransferData.value, {
-                                x: institution.x,
-                                y: institution.y - 64,
-                            }, () => {
+                            refTransferData.value && fadeIn(refTransferData.value, () => {
                                 refTransferedLearningRecords.value && fadeIn(refTransferedLearningRecords.value, () => {
                                     transferedRecordsDiv.style.opacity = '0';
                                     (refTransferData.value as HTMLDivElement).style.opacity = '0';
                                     (refOffChainData.value as HTMLDivElement).style.opacity = '0';
+                                    (refApplyArrow.value as HTMLDivElement).style.opacity = '0';
                                     resolve(1)
                                 })
                             })
@@ -256,48 +250,58 @@ const { running, currentStep } = genSteps(steps, 1);
 </script>
         
 <template>
-    <div class="scene" ref="refWindow">
-        <div class="fullscene">
-            <div class="node" v-for="node, i in nodes" :style="{
-              left: node.x + 'px',
-              top: node.y + 'px'
-            }">
-                <Role :role="node.role" :title="node.title" />
-            </div>
-
-            <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
-        </div>
-
-        <div class="fullscene">
-            <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
-                <Item type="contract" title="智能合约" />
-            </div>
-
-            <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="record" title="学习成果" />
-            </div>
-
-            <div ref="refTransferData" :style="{ opacity: 0 }" class="node">
-                <Item type="transfer" title="转换机制" />
-            </div>
-
-            <div ref="refOffChainData" :style="{ opacity: 0 }" class="node">
-                <Item type="offChain" title="链下数据" />
-            </div>
-
-            <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="credential" title="验证成功" />
-            </div>
-
-
-            <div ref="refTransferedLearningRecords" :style="{ opacity: 0 }" class="node">
-                <Item type="transferred" title="转换后的学习成果" />
-            </div>
-        </div>
-    </div>
-
     <div class="footer">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
+    </div>
+
+    <div style="overflow: auto; flex: 1;">
+        <div class="scene" ref="refWindow" :style="{
+            minWidth: minCanvasWidth + 'px',
+            minHeight: minCanvasHeight + 'px'
+        }">
+            <div class="fullscene">
+                <div class="node" v-for="node, i in nodes" :style="{
+                  left: node.x + 'px',
+                  top: node.y + 'px'
+                }">
+                    <Role :role="node.role" :title="node.title" />
+                </div>
+
+                <Blockchain :nodes="nodes" :width="screenWidth" :height="screenHeight" />
+            </div>
+
+            <div class="fullscene">
+                <div ref="refSmartContract" :style="{ opacity: 0 }" class="node">
+                    <Item type="contract" title="智能合约" />
+                </div>
+
+                <div ref="refLearningRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="record" title="学习成果" />
+                </div>
+
+                <div ref="refTransferData" :style="{ opacity: 0 }" class="node">
+                    <Item type="transfer" title="转换机制" />
+                </div>
+
+                <div ref="refOffChainData" :style="{ opacity: 0 }" class="node">
+                    <Item type="offChain" title="链下数据" />
+                </div>
+
+                <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="credential" title="验证成功" />
+                </div>
+
+                <div ref="refTransferedLearningRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="transferred" title="转换后的学习成果" />
+                </div>
+
+                <div class="line" ref="refApplyArrow" :style="{ opacity: 0 }">
+                    <div style="margin: -32px auto;">
+                        发起转换申请
+                    </div> 
+                </div>
+            </div>
+        </div>
     </div>
 </template>
             
@@ -305,6 +309,7 @@ const { running, currentStep } = genSteps(steps, 1);
 .scene {
     flex: 1;
     position: relative;
+    height: 100%;
 }
 
 .fullscene {
@@ -316,8 +321,8 @@ const { running, currentStep } = genSteps(steps, 1);
 }
 
 .footer {
-    height: 120px;
     flex: none;
+    overflow-y: auto;
 }
 
 .node {
@@ -325,5 +330,12 @@ const { running, currentStep } = genSteps(steps, 1);
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
+}
+
+.line {
+    position: absolute;
+    height: 3px;
+    text-align: center;
+    background-color: black;
 }
 </style>

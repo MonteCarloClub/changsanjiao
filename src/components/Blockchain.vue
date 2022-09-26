@@ -1,5 +1,9 @@
 <template>
     <canvas ref="canvasEl" class="path-canvas"></canvas>
+    <div class="title" :style="{
+        left: titleX + 'px',
+        top: titleY + 'px'
+    }">长三角学分银行区块链</div>
 </template>
 
 <script setup lang="ts">
@@ -40,6 +44,9 @@ watch(
         init(canvas);
     }
 )
+
+const titleX = ref<number>(0);
+const titleY = ref<number>(0);
 
 const init = (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
@@ -94,12 +101,9 @@ const init = (canvas: HTMLCanvasElement) => {
     ctx.strokeRect(from.x, from.y, width, height);
 
     // 写字
-    ctx.font = '14px Arial';
-    ctx.textBaseline = 'top'
-    ctx.textAlign = 'center'
-
     const mid = (left.x + right.x) / 2
-    ctx.fillText('长三角学分银行区块链', mid, left.y + size + 12);
+    titleX.value = mid;
+    titleY.value = left.y + size + 12
 }
 
 </script>
@@ -109,5 +113,10 @@ const init = (canvas: HTMLCanvasElement) => {
     position: absolute;
     left: 0;
     top: 0;
+}
+
+.title {
+    position: absolute;
+    transform: translateX(-50%);
 }
 </style>
