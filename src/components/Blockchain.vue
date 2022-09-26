@@ -42,7 +42,23 @@ watch(
 )
 
 const init = (canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d');
+
+    // 解决高分屏下canvas模糊问题
+    const dpr = window.devicePixelRatio || 1;
+    // const dpr = window.devicePixelRatio || window.webkitDevicePixelRatio || window.mozDevicePixelRatio || 1;
+
+    const oldWidth = canvas.width;
+    const oldHeight = canvas.height;
+    // Give the canvas pixel dimensions of their CSS
+    // size * the device pixel ratio.
+    canvas.width = Math.round(oldWidth * dpr);
+    canvas.height = Math.round(oldHeight * dpr);
+    canvas.style.width = oldWidth + 'px';
+    canvas.style.height = oldHeight + 'px';
+    // Scale all drawing operations by the dpr, so you
+    // don't have to worry about the difference.
+    ctx!.scale(dpr, dpr);
 
     const blocks = props.nodes.filter(role => role.role === 'block');
     blocks.sort((r1, r2) => r1.x - r2.x);

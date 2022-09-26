@@ -42,7 +42,7 @@ const init: Node[] = [
         x: 75,
         y: 80,
         role: 'user',
-        title: '招聘人员'
+        title: '招聘单位HR'
     },
     {
         x: 50,

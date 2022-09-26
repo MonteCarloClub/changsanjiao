@@ -46,7 +46,7 @@ const init: Node[] = [
         x: 80,
         y: 80,
         role: 'institutionBlue',
-        title: '苏州市教育机构'
+        title: '江苏省教育机构'
     },
     {
         x: 40,
@@ -135,7 +135,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '初始化机构之间的转换',
+        title: '发起转换请求',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const banks = nodes.value.filter(node => node.role === 'bank')
