@@ -79,7 +79,15 @@ const init = (canvas: HTMLCanvasElement) => {
 
     // 画箭头
     for (let index = 0; index < blocks.length - 1; index++) {
-        drawArrow(ctx, blocks[index], blocks[index + 1])
+        const from = blocks[index];
+        const to = blocks[index + 1];
+        drawArrow(ctx, {
+            x: from.x + 32,
+            y: from.y,
+        }, {
+            x: to.x - 32,
+            y: to.y,
+        })
     }
     
     // 画虚线框

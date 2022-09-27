@@ -2,14 +2,16 @@
 import { ref } from "vue";
 
 import { moveTo, fadeOut, fadeIn, expandToLeft } from "@/common/animate";
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { genSteps, Step } from "@/common/step";
-import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { Path } from "@/common/utils";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
 import Steps from "@/components/Steps.vue";
+import Board from "@/components/Board.vue";
 import Blockchain from "@/components/Blockchain.vue";
 
 const init: Node[] = [
@@ -79,6 +81,8 @@ const refVerifyRecords = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
 const refTransferedLearningRecords = ref<HTMLElement | null>(null);
 
+const pathes = ref<Array<Path>>([]);
+
 const steps: Step[] = [
     {
         title: '学分银行部署学分转换的智能合约',
@@ -104,7 +108,19 @@ const steps: Step[] = [
                 refSmartContract.value && moveTo(refSmartContract.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[0] = [
+                        {
+                            x: bank.x,
+                            y: bank.y + 64
+                        },
+                        {
+                            x: block.x,
+                            y: block.y - 96
+                        }
+                    ]
+                    resolve(1)
+                })
             })
         }
     },
@@ -132,7 +148,19 @@ const steps: Step[] = [
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[1] = [
+                        {
+                            x: institution.x,
+                            y: institution.y - 64
+                        },
+                        {
+                            x: block.x,
+                            y: block.y + 64
+                        }
+                    ]
+                    resolve(1)
+                })
             })
         }
     },
@@ -161,6 +189,16 @@ const steps: Step[] = [
                     x: bank.x + 64,
                 }, () => {
                     refApplyArrow.value && fadeOut(refApplyArrow.value, () => resolve(1))
+                    pathes.value[2] = [
+                        {
+                            x: user.x - 64,
+                            y: user.y
+                        },
+                        {
+                            x: bank.x + 64,
+                            y: bank.y
+                        }
+                    ]
                 })
             })
         }
@@ -176,9 +214,18 @@ const steps: Step[] = [
                 const user = users[0];
 
                 const offChainDataDiv = refOffChainData.value as HTMLDivElement;
-                offChainDataDiv.style.left = user.x - 64 + 'px';
-                offChainDataDiv.style.top = user.y + 'px';
-
+                offChainDataDiv.style.left = user.x + 'px';
+                offChainDataDiv.style.top = user.y  + 128 + 'px';
+                pathes.value[3] = [
+                    {
+                        x: user.x,
+                        y: user.y + 64
+                    },
+                    {
+                        x: user.x,
+                        y: user.y + 128
+                    }
+                ]
                 refOffChainData.value && fadeIn(refOffChainData.value, () => resolve(1));
             })
         }
@@ -193,10 +240,32 @@ const steps: Step[] = [
                 }
                 const block = blocks[2];
 
+                const users = nodes.value.filter(node => node.role === 'user')
+                if (users.length === 0) {
+                    reject(1);
+                }
+                const user = users[0];
+
                 refOffChainData.value && moveTo(refOffChainData.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[4] = [
+                        {
+                            x: user.x,
+                            y: user.y + 128
+                        },
+                        {
+                            x: block.x,
+                            y: user.y + 128
+                        },
+                        {
+                            x: block.x,
+                            y: block.y - 64
+                        },
+                    ]
+                    resolve(1)
+                })
             })
         }
     },
@@ -223,6 +292,12 @@ const steps: Step[] = [
                 transferDataDiv.style.left = institution.x + 'px';
                 transferDataDiv.style.top = institution.y - 64 + 'px';
 
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+                const block = blocks[3];
+
                 // 数据过去后验证
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: institution.x - 64,
@@ -236,6 +311,17 @@ const steps: Step[] = [
                                     (refTransferData.value as HTMLDivElement).style.opacity = '0';
                                     (refOffChainData.value as HTMLDivElement).style.opacity = '0';
                                     (refApplyArrow.value as HTMLDivElement).style.opacity = '0';
+
+                                    pathes.value[5] = [
+                                        {
+                                            x: institution.x,
+                                            y: institution.y - 32
+                                        },
+                                        {
+                                            x: block.x,
+                                            y: block.y + 64
+                                        },
+                                    ]
                                     resolve(1)
                                 })
                             })
@@ -298,8 +384,12 @@ const { running, currentStep } = genSteps(steps, 1);
                 <div class="line" ref="refApplyArrow" :style="{ opacity: 0 }">
                     <div style="margin: -32px auto;">
                         发起转换申请
-                    </div> 
+                    </div>
                 </div>
+            </div>
+
+            <div class="fullscene">
+                <Board :pathes="pathes" :width="screenWidth" :height="screenHeight" />
             </div>
         </div>
     </div>

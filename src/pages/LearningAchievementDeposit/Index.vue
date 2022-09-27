@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { Path } from "@/common/utils";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
 import Steps from "@/components/Steps.vue";
+import Board from "@/components/Board.vue";
 import Blockchain from "@/components/Blockchain.vue";
 
 const init: Node[] = [
@@ -63,6 +65,8 @@ const refSmartContract = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
 const refVerifyRecords = ref<HTMLElement | null>(null);
 
+const pathes = ref<Array<Path>>([]);
+
 const steps: Step[] = [
     {
         title: '学分银行部署智能合约',
@@ -72,10 +76,10 @@ const steps: Step[] = [
                 if (banks.length === 0) {
                     reject(1);
                 }
-                const user = banks[0];
+                const bank = banks[0];
                 const div = refSmartContract.value as HTMLDivElement;
-                div.style.left = user.x + 'px';
-                div.style.top = user.y + 'px';
+                div.style.left = bank.x + 'px';
+                div.style.top = bank.y + 'px';
                 div.style.opacity = '1';
 
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -87,7 +91,19 @@ const steps: Step[] = [
                 refSmartContract.value && moveTo(refSmartContract.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[0] = [{
+                        x: bank.x - 32,
+                        y: bank.y
+                    }, {
+                        x: block.x,
+                        y: bank.y
+                    }, {
+                        x: block.x,
+                        y: block.y - 112,
+                    }];
+                    resolve(1);
+                })
             })
         }
     },
@@ -114,7 +130,16 @@ const steps: Step[] = [
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: institution.x,
                     y: institution.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[1] = [{
+                        x: user.x - 32,
+                        y: user.y
+                    }, {
+                        x: institution.x + 48,
+                        y: institution.y,
+                    }];
+                    resolve(1)
+                })
             })
         }
     },
@@ -143,7 +168,16 @@ const steps: Step[] = [
                 refVerifyRecords.value && moveTo(refVerifyRecords.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, finish)
+                }, () => {
+                    pathes.value[2] = [{
+                        x: parseInt(learningRecords.style.left),
+                        y: parseInt(learningRecords.style.top)
+                    }, {
+                        x: block.x,
+                        y: block.y + 64,
+                    }];
+                    finish()
+                })
 
                 refLearningRecords.value && fadeOut(refLearningRecords.value, finish)
             })
@@ -172,7 +206,16 @@ const steps: Step[] = [
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[3] = [{
+                        x: user.x,
+                        y: user.y - 32
+                    }, {
+                        x: block.x,
+                        y: block.y + 64,
+                    }];
+                    resolve(1)
+                })
             })
         }
     },
@@ -195,9 +238,28 @@ const steps: Step[] = [
                     count += 1;
                     if (count === 2) {
                         refLearningRecords.value && moveTo(refLearningRecords.value, {
-                            x: bank.x,
-                            y: bank.y - 64,
-                        }, () => resolve(1));
+                            x: bank.x - 64,
+                            y: bank.y,
+                        }, () => {
+
+                            const blocks = nodes.value.filter(node => node.role === 'block')
+                            if (blocks.length === 0) {
+                                reject(1);
+                            }
+                            const block = blocks[2];
+
+                            pathes.value[4] = [{
+                                x: block.x,
+                                y: block.y - 64
+                            }, {
+                                x: block.x,
+                                y: bank.y,
+                            }, {
+                                x: bank.x + 32,
+                                y: bank.y,
+                            }];
+                            resolve(1)
+                        });
                     }
                 }
 
@@ -226,7 +288,31 @@ const steps: Step[] = [
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: user.x,
                     y: user.y - 64,
-                }, () => { resolve(1) });
+                }, () => {
+                    const banks = nodes.value.filter(node => node.role === 'bank')
+                    if (banks.length === 0) {
+                        reject(1);
+                    }
+                    const bank = banks[0];
+
+                    pathes.value[5] = [{
+                        x: bank.x,
+                        y: bank.y - 32
+                    }, {
+                        x: bank.x,
+                        y: bank.y - 64
+                    }, {
+                        x: user.x + 64,
+                        y: bank.y - 64
+                    }, {
+                        x: user.x + 64,
+                        y: user.y
+                    }, {
+                        x: user.x + 32,
+                        y: user.y
+                    }];
+                    resolve(1)
+                });
             })
         }
     },
@@ -265,6 +351,9 @@ const { running, currentStep } = genSteps(steps, 1);
                 <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
                     <Item type="credential" title="学习成果证明" />
                 </div>
+            </div>
+            <div class="fullscene">
+                <Board :pathes="pathes" :width="screenWidth" :height="screenHeight" />
             </div>
         </div>
     </div>

@@ -1,27 +1,29 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { moveTo, fadeOut } from "@/common/animate";
+import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
-import { genSteps, Step } from "@/common/step";
-import { moveTo, fadeOut } from "@/common/animate";
-import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { Path } from "@/common/utils";
 
 import Role from "@/components/Role.vue";
 import Item from "@/components/Item.vue";
 import Steps from "@/components/Steps.vue";
+import Board from "@/components/Board.vue";
 import Blockchain from "@/components/Blockchain.vue";
 
 
 const init: Node[] = [
     {
-        x: 10,
+        x: 16,
         y: 50,
         role: 'block',
         title: '区块'
     },
     {
-        x: 50,
+        x: 53,
         y: 50,
         role: 'block',
         title: '区块'
@@ -33,7 +35,7 @@ const init: Node[] = [
         title: '区块'
     },
     {
-        x: 10,
+        x: 16,
         y: 10,
         role: 'user',
         title: '学习者'
@@ -45,13 +47,13 @@ const init: Node[] = [
         title: '招聘单位HR'
     },
     {
-        x: 50,
+        x: 53,
         y: 10,
         role: 'institution',
         title: '发证机构'
     },
     {
-        x: 10,
+        x: 16,
         y: 90,
         role: 'bank',
         title: '长三角学分银行（上海/江苏/浙江/安徽）'
@@ -71,6 +73,8 @@ const refVerifyRecords = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
 const refLearningRecordsCopy = ref<HTMLElement | null>(null);
 const refLearningRecordAddress = ref<HTMLElement | null>(null);
+
+const pathes = ref<Array<Path>>([]);
 
 const steps: Step[] = [
     {
@@ -97,7 +101,19 @@ const steps: Step[] = [
                 refSmartContract.value && moveTo(refSmartContract.value, {
                     x: block.x,
                     y: block.y - 64,
-                }, () => resolve(1))
+                }, () => {
+                    pathes.value[0] = [
+                        {
+                            x: bank.x,
+                            y: bank.y - 32
+                        },
+                        {
+                            x: block.x,
+                            y: block.y + 64
+                        }
+                    ]
+                    resolve(1)
+                })
             })
         }
     },
@@ -127,10 +143,27 @@ const steps: Step[] = [
                 }
                 const institution = institutions[0];
 
+                // 挑选一个链上区块
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+                const block = blocks[1];
+
                 let count = 0;
                 const finish = () => {
                     count += 1;
                     if (count === 2) {
+                        pathes.value[1] = [
+                            {
+                                x: institution.x,
+                                y: institution.y + 64
+                            },
+                            {
+                                x: block.x,
+                                y: block.y - 64
+                            }
+                        ]
                         resolve(1)
                     }
                 }
@@ -145,12 +178,6 @@ const steps: Step[] = [
                     verifyRecords.style.left = institution.x + 'px';
                     verifyRecords.style.top = institution.y + 'px';
                     verifyRecords.style.opacity = '1';
-                    // 挑选一个链上区块
-                    const blocks = nodes.value.filter(node => node.role === 'block')
-                    if (blocks.length === 0) {
-                        reject(1);
-                    }
-                    const block = blocks[1];
 
                     // 验证结果上链
                     refVerifyRecords.value && moveTo(refVerifyRecords.value, {
@@ -193,7 +220,27 @@ const steps: Step[] = [
                 refLearningRecordAddress.value && moveTo(refLearningRecordAddress.value, {
                     x: bank.x - 64,
                     y: bank.y,
-                }, () => resolve(1));
+                }, () => {
+                    pathes.value[2] = [
+                        {
+                            x: user.x - 32,
+                            y: user.y
+                        },
+                        {
+                            x: user.x - 96,
+                            y: user.y
+                        },
+                        {
+                            x: user.x - 96,
+                            y: bank.y
+                        },
+                        {
+                            x: bank.x - 32,
+                            y: bank.y
+                        }
+                    ]
+                    resolve(1)
+                });
             })
         }
     },
@@ -202,10 +249,38 @@ const steps: Step[] = [
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
 
+                // 找到银行的位置
+                const banks = nodes.value.filter(node => node.role === 'bank')
+                if (banks.length === 0) {
+                    reject(1);
+                }
+                const bank = banks[0];
+
+
+                // 获取第一个区块
+                const blocks = nodes.value.filter(node => node.role === 'block')
+                if (blocks.length === 0) {
+                    reject(1);
+                }
+
                 let count = 0;
                 const finish = () => {
                     count += 1;
                     if (count === 3) {
+                        pathes.value[3] = [
+                            {
+                                x: bank.x + 32,
+                                y: bank.y
+                            },
+                            {
+                                x: blocks[1].x,
+                                y: bank.y
+                            },
+                            {
+                                x: blocks[1].x,
+                                y: blocks[1].y + 64
+                            },
+                        ]
                         resolve(1);
                     }
                 }
@@ -214,10 +289,6 @@ const steps: Step[] = [
                 refLearningRecordAddress.value && fadeOut(refLearningRecordAddress.value, finish);
 
                 // 获取第一个区块
-                const blocks = nodes.value.filter(node => node.role === 'block')
-                if (blocks.length === 0) {
-                    reject(1);
-                }
                 const block = blocks[0];
 
                 // 验证结果进入智能合约
@@ -267,7 +338,19 @@ const steps: Step[] = [
                         refLearningRecordsCopy.value && moveTo(refLearningRecordsCopy.value, {
                             x: hr.x,
                             y: hr.y - 64,
-                        }, () => resolve(1))
+                        }, () => {
+                            pathes.value[4] = [
+                                {
+                                    x: block.x,
+                                    y: block.y
+                                },
+                                {
+                                    x: hr.x,
+                                    y: hr.y - 64
+                                },
+                            ]
+                            resolve(1)
+                        })
                     }
                 }
 
@@ -329,7 +412,10 @@ const { running, currentStep } = genSteps(steps, 1);
                 <div ref="refLearningRecordAddress" :style="{ opacity: 0 }" class="node">
                     <Item type="address" title="学习成果链上地址" />
                 </div>
+            </div>
 
+            <div class="fullscene">
+                <Board :pathes="pathes" :width="screenWidth" :height="screenHeight" />
             </div>
         </div>
     </div>

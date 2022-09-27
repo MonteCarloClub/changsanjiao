@@ -24,5 +24,5 @@ export const icon = {
 };
 
 export const stepInterval = 1000;
-export const minCanvasWidth = 1080;
-export const minCanvasHeight = 960;
+export const minCanvasWidth = 960;
+export const minCanvasHeight = 640;

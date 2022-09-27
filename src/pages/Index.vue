@@ -11,17 +11,12 @@ const scenarios = getScenarios();
         </div>
         <div class="card-list">
             <div class="flex-item" v-for="scenario in scenarios">
-                <a-card hoverable style="width: 240px; margin: auto;">
-                    <template #cover>
-                        <img alt="example" class="image" :src="scenario.image" />
-                    </template>
-                    <a-card-meta :title="scenario.title">
-                        <template #description>
-                            <router-link :to="{ name: scenario.name, params: { ...scenario }}">
-                                前往场景
-                            </router-link>
-                        </template>
-                    </a-card-meta>
+                <a-card hoverable style="width: 240px; margin: auto;text-align: center;">
+                    <a-button type="primary" size="large">
+                        <router-link :to="{ name: scenario.name, params: { ...scenario }}">
+                            {{ scenario.title }}
+                        </router-link>
+                    </a-button>
                 </a-card>
             </div>
         </div>

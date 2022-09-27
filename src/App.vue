@@ -66,3 +66,11 @@ watchEffect(
   display: flex;
 }
 </style>
+
+<style>
+.scene {
+  max-width: 1080px;
+  max-height: 840px;
+  margin: auto;
+}
+</style>

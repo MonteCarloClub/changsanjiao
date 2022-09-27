@@ -1,8 +1,10 @@
-type Position = {
+export type Position = {
   x: number;
   y: number;
   [key: string]: any;
 };
+
+export type Path = Position[]
 
 /**
  * 计算两点间的距离
@@ -29,18 +31,11 @@ export function distance(from: Position, to: Position) {
  * @param from 
  * @param to 
  */
-export function drawArrow(ctx: CanvasRenderingContext2D, from: Position, to: Position) {
+export function drawArrow(ctx: CanvasRenderingContext2D, from: Position, to: Position, arrowWidth: number = 3) {
     //variables to be used when creating the arrow
     const headlen = 10;
-    const arrowWidth = 3;
     const color = 'black'
     const angle = Math.atan2(to.y - from.y, to.x - from.x);
-
-    const r = 36;
-    const fromx = from.x + r
-    const fromy = from.y
-    const tox = to.x - r
-    const toy = to.y
 
     ctx.save();
     ctx.strokeStyle = color;
@@ -48,27 +43,27 @@ export function drawArrow(ctx: CanvasRenderingContext2D, from: Position, to: Pos
     //starting path of the arrow from the start square to the end square
     //and drawing the stroke
     ctx.beginPath();
-    ctx.moveTo(fromx, fromy);
-    ctx.lineTo(tox, toy);
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
     ctx.lineWidth = arrowWidth;
     ctx.stroke();
 
     //starting a new path from the head of the arrow to one of the sides of
     //the point
     ctx.beginPath();
-    ctx.moveTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
+    ctx.moveTo(to.x, to.y);
+    ctx.lineTo(to.x - headlen * Math.cos(angle - Math.PI / 7),
+        to.y - headlen * Math.sin(angle - Math.PI / 7));
 
     //path from the side point of the arrow, to the other side point
-    ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 7),
-        toy - headlen * Math.sin(angle + Math.PI / 7));
+    ctx.lineTo(to.x - headlen * Math.cos(angle + Math.PI / 7),
+        to.y - headlen * Math.sin(angle + Math.PI / 7));
 
     //path from the side point back to the tip of the arrow, and then
     //again to the opposite side point
-    ctx.lineTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
+    ctx.lineTo(to.x, to.y);
+    ctx.lineTo(to.x - headlen * Math.cos(angle - Math.PI / 7),
+        to.y - headlen * Math.sin(angle - Math.PI / 7));
 
     //draws the paths created above
     ctx.stroke();
