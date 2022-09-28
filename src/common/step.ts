@@ -15,11 +15,11 @@ export function genSteps(steps: Step[], loopBegin: number) {
 
   const nextStep = () => {
     running.value = true;
-    if (currentStep.value === steps.length) {
-      currentStep.value = loopBegin;
-    }
 
     timer = setTimeout(() => {
+      if (currentStep.value === steps.length) {
+        currentStep.value = loopBegin;
+      }
       steps[currentStep.value].handler().then(() => {
         currentStep.value += 1;
         running.value = false;

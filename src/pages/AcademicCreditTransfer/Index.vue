@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+    import { ref, watch } from "vue";
 
 import { moveTo, fadeOut, fadeIn, expandToLeft } from "@/common/animate";
 import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
@@ -83,6 +83,7 @@ const refTransferedLearningRecords = ref<HTMLElement | null>(null);
 
 const pathes = ref<Array<Path>>([]);
 
+const loopBegin = 1;
 const steps: Step[] = [
     {
         title: '学分银行部署学分转换的智能合约',
@@ -333,6 +334,16 @@ const steps: Step[] = [
     },
 ]
 const { running, currentStep } = genSteps(steps, 1);
+let first = true;
+watch(currentStep, (current) => {
+    if (first) {
+        first = false;
+        return
+    }
+    if (current === loopBegin) {
+        pathes.value = pathes.value.slice(0, loopBegin)
+    }
+})
 </script>
         
 <template>

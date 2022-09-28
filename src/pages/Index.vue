@@ -11,13 +11,9 @@ const scenarios = getScenarios();
         </div>
         <div class="card-list">
             <div class="flex-item" v-for="scenario in scenarios">
-                <a-card hoverable style="width: 240px; margin: auto;text-align: center;">
-                    <a-button type="primary" size="large">
-                        <router-link :to="{ name: scenario.name, params: { ...scenario }}">
-                            {{ scenario.title }}
-                        </router-link>
-                    </a-button>
-                </a-card>
+                <router-link class="button" :to="{ name: scenario.name, params: { ...scenario }}">
+                    {{ scenario.title }}
+                </router-link>
             </div>
         </div>
     </div>
@@ -39,17 +35,26 @@ const scenarios = getScenarios();
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    max-width: 840px;
 }
 
 .flex-item {
     flex: 1;
-    padding: 20px;
-    min-width: 260px;
+    padding: 20px 32px;
+    margin: 20px 0;
+    min-width: 320px;
     max-width: 480px;
+    text-align: center;
 }
 
 .image {
     height: 180px;
+}
+
+.button {
+    color: #fff;
+    background: #1890ff;
+    border-color: #1890ff;
+    font-size: 24px;
+    padding: 24px 32px;
 }
 </style>

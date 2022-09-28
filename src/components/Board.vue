@@ -44,6 +44,8 @@ const init = (canvas: HTMLCanvasElement) => {
     if (!ctx) {
         return;
     }
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 解决高分屏下canvas模糊问题
     const dpr = window.devicePixelRatio || 1;
@@ -92,7 +94,6 @@ function drawLine(ctx: CanvasRenderingContext2D, from: Position, to: Position, l
     ctx.lineTo(to.x, to.y);
     ctx.stroke();
 }
-
 </script>
 
 <style scoped>
