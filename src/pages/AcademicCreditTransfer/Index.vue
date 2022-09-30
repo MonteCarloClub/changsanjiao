@@ -65,12 +65,20 @@ const init: Node[] = [
     },
 ]
 
+
 const refWindow = ref<HTMLElement | null>(null);
+const refDynamicWindow = ref<HTMLElement | null>(null);
 const {
     nodes,
     screenWidth,
     screenHeight,
-} = createScene(refWindow, init)
+    scaleRate
+} = createScene(refDynamicWindow, refWindow, init);
+
+watch(scaleRate, () => {
+    const dynamicWindow = refWindow.value as HTMLDivElement;
+    dynamicWindow.style.transform = `scale(${scaleRate.value})`
+})
 
 
 const refApplyArrow = ref<HTMLElement | null>(null);
@@ -351,7 +359,7 @@ watch(currentStep, (current) => {
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
 
-    <div style="overflow: auto; flex: 1;">
+    <div ref="refDynamicWindow" class="scene-container">
         <div class="scene" ref="refWindow" :style="{
             minWidth: minCanvasWidth + 'px',
             minHeight: minCanvasHeight + 'px'

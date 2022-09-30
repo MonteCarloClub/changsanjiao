@@ -72,5 +72,11 @@ watchEffect(
   max-width: 1080px;
   max-height: 840px;
   margin: auto;
+  transform-origin: top left;
+}
+
+.scene-container {
+  flex: 1; 
+  overflow: hidden;
 }
 </style>
