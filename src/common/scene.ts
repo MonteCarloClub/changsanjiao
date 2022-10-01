@@ -1,4 +1,4 @@
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { Role } from "@/common/roles";
 import { createNet } from "@/common/roles";
 
@@ -24,16 +24,28 @@ export function createScene(
       const dynamicWindowInfos = refDynamicWindow.value?.getClientRects();
       const dynamicWidth = dynamicWindowInfos[0].width;
       const dynamicHeight = dynamicWindowInfos[0].height;
-      
+
       const r = Math.min(dynamicWidth / width, dynamicHeight / height);
       scaleRate.value = r < 1 ? r : 1;
+
+      if (window.innerWidth < 720) {
+        scaleRate.value = dynamicWidth / width;
+      }
     }
+  });
+
+  watch(scaleRate, () => {
+    const refWindowDiv = refWindow.value as HTMLDivElement;
+    refWindowDiv.style.transform = `scale(${scaleRate.value})`;
+    const refDynamicWindowDiv = refDynamicWindow.value as HTMLDivElement;
+    refDynamicWindowDiv.style.flex = "none";
+    refDynamicWindowDiv.style.height =
+      screenHeight.value * scaleRate.value + "px";
   });
 
   return {
     screenWidth,
     screenHeight,
-    scaleRate,
     nodes,
   };
 }

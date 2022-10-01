@@ -71,14 +71,8 @@ const refDynamicWindow = ref<HTMLElement | null>(null);
 const {
     nodes,
     screenWidth,
-    screenHeight,
-    scaleRate
+    screenHeight
 } = createScene(refDynamicWindow, refWindow, init);
-
-watch(scaleRate, () => {
-    const dynamicWindow = refWindow.value as HTMLDivElement;
-    dynamicWindow.style.transform = `scale(${scaleRate.value})`
-})
 
 
 const refApplyArrow = ref<HTMLElement | null>(null);
@@ -352,10 +346,14 @@ watch(currentStep, (current) => {
         pathes.value = pathes.value.slice(0, loopBegin)
     }
 })
+
+const windowWidth = ref<number>(window.innerWidth);
 </script>
         
 <template>
-    <div class="footer">
+    <div class="footer" :style="{
+        flex: windowWidth > 720 ? 'none' : '1'
+    }">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
 
@@ -427,11 +425,6 @@ watch(currentStep, (current) => {
     right: 0;
     bottom: 0;
     left: 0;
-}
-
-.footer {
-    flex: none;
-    overflow-y: auto;
 }
 
 .node {

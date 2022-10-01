@@ -51,7 +51,6 @@ watchEffect(
 );
 
 const screenWidth = ref<number>(window.innerWidth);
-
 </script>
 
 <style scoped>
@@ -81,7 +80,10 @@ const screenWidth = ref<number>(window.innerWidth);
 }
 
 .scene-container {
-  flex: 1; 
   overflow: hidden;
+}
+
+.footer {
+    overflow-y: auto;
 }
 </style>
