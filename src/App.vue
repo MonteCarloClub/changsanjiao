@@ -9,7 +9,9 @@
       </a-menu-item>
     </a-menu>
   </div>
-  <div class="container">
+  <div class="container" :style="{
+    flexDirection: screenWidth > 720 ? 'row' : 'column-reverse'
+  }">
     <router-view></router-view>
   </div>
 </template>
@@ -47,6 +49,9 @@ watchEffect(
     document.title = s && s.title || '长三角学分银行';
   }
 );
+
+const screenWidth = ref<number>(window.innerWidth);
+
 </script>
 
 <style scoped>
