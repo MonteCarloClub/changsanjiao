@@ -26,7 +26,7 @@ defineProps({
     
 <template>
     <div class="steps">
-        <a-steps :current="current" direction="vertical">
+        <a-steps :current="current" direction="vertical" class="custom-ant-steps">
             <a-step v-for="item in steps" :key="item.title" :title="item.title" class="step"/>
         </a-steps>
         <!-- <div v-if="auto" class="steps-action">
@@ -41,9 +41,17 @@ defineProps({
 
 <style scoped>
 .steps {
-    margin: 60px 0 0 60px;
+    padding: 32px;
     position: relative;
     overflow-y: auto;
+    height: 100%;
+}
+
+.custom-ant-steps {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
 }
 
 .steps-action {
