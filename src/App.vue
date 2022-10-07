@@ -77,6 +77,7 @@ const screenWidth = ref<number>(window.innerWidth);
   max-height: 840px;
   margin: auto;
   transform-origin: top left;
+  font-size: 16px;
 }
 
 .scene-container {

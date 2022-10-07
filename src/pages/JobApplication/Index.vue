@@ -71,7 +71,7 @@ const {
 const refSmartContract = ref<HTMLElement | null>(null);
 const refVerifyRecords = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
-const refLearningRecordsCopy = ref<HTMLElement | null>(null);
+const refVerifiedRecordsCopy = ref<HTMLElement | null>(null);
 const refLearningRecordAddress = ref<HTMLElement | null>(null);
 
 const pathes = ref<Array<Path>>([]);
@@ -124,7 +124,7 @@ const steps: Step[] = [
             return new Promise((resolve, reject) => {
 
                 // 学习成果副本消失
-                refLearningRecordsCopy.value && fadeOut(refLearningRecordsCopy.value);
+                refVerifiedRecordsCopy.value && fadeOut(refVerifiedRecordsCopy.value);
 
                 const users = nodes.value.filter(node => node.role === 'user')
                 if (users.length === 0) {
@@ -187,16 +187,13 @@ const steps: Step[] = [
                     }, finish);
 
                     // 学习成果上链
-                    refLearningRecords.value && moveTo(refLearningRecords.value, {
-                        x: block.x - 64,
-                        y: block.y - 64,
-                    }, finish);
+                    refLearningRecords.value && fadeOut(refLearningRecords.value, finish);
                 })
             })
         }
     },
     {
-        title: '发送学习成果的地址',
+        title: '学习者将学习成果的链上地址发给学分银行',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -267,7 +264,7 @@ const steps: Step[] = [
                 let count = 0;
                 const finish = () => {
                     count += 1;
-                    if (count === 3) {
+                    if (count === 2) {
                         pathes.value[3] = [
                             {
                                 x: bank.x + 32,
@@ -297,12 +294,6 @@ const steps: Step[] = [
                     x: block.x + 64 + 64,
                     y: block.y - 64,
                 }, finish);
-
-                // 学习成果进入智能合约
-                refLearningRecords.value && moveTo(refLearningRecords.value, {
-                    x: block.x + 64,
-                    y: block.y - 64,
-                }, finish);
             })
         }
     },
@@ -320,13 +311,13 @@ const steps: Step[] = [
                 let count = 0;
                 const finish = () => {
                     count += 1;
-                    if (count === 2) {
+                    if (count === 1) {
                         // 复制一份学习成果
-                        const recordDiv = refLearningRecords.value as HTMLDivElement;
-                        const recordDivCopy = refLearningRecordsCopy.value as HTMLDivElement;
-                        recordDivCopy.style.left = recordDiv.style.left;
-                        recordDivCopy.style.top = recordDiv.style.top;
-                        recordDivCopy.style.opacity = '1';
+                        const verifiedDiv = refVerifyRecords.value as HTMLDivElement;
+                        const verifiedDivCopy = refVerifiedRecordsCopy.value as HTMLDivElement;
+                        verifiedDivCopy.style.left = verifiedDiv.style.left;
+                        verifiedDivCopy.style.top = verifiedDiv.style.top;
+                        verifiedDivCopy.style.opacity = '1';
 
                         // 找到 hr
                         const users = nodes.value.filter(node => node.role === 'user')
@@ -336,7 +327,7 @@ const steps: Step[] = [
                         const hr = users[1];
 
                         // 移动到 hr 手里
-                        refLearningRecordsCopy.value && moveTo(refLearningRecordsCopy.value, {
+                        refVerifiedRecordsCopy.value && moveTo(refVerifiedRecordsCopy.value, {
                             x: hr.x,
                             y: hr.y - 64,
                         }, () => {
@@ -357,12 +348,6 @@ const steps: Step[] = [
 
                 // 验证结果到第三个区块
                 refVerifyRecords.value && moveTo(refVerifyRecords.value, {
-                    x: block.x + 64,
-                    y: block.y - 64,
-                }, finish);
-
-                // 学习成果到第三个区块
-                refLearningRecords.value && moveTo(refLearningRecords.value, {
                     x: block.x,
                     y: block.y - 64,
                 }, finish);
@@ -417,11 +402,11 @@ const windowWidth = ref<number>(window.innerWidth);
                 </div>
 
                 <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                    <Item type="credential" title="成果证明" />
+                    <Item type="verified" title="学习成果【已验证】" />
                 </div>
 
-                <div ref="refLearningRecordsCopy" :style="{ opacity: 0 }" class="node">
-                    <Item type="record" title="学习成果" />
+                <div ref="refVerifiedRecordsCopy" :style="{ opacity: 0 }" class="node">
+                    <Item type="verified" title="学习成果【已验证】" />
                 </div>
 
                 <div ref="refLearningRecordAddress" :style="{ opacity: 0 }" class="node">

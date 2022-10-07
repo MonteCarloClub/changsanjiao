@@ -64,6 +64,7 @@ const {
 const refSmartContract = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
 const refVerifyRecords = ref<HTMLElement | null>(null);
+const refVerifiedRecordsCopy = ref<HTMLElement | null>(null);
 
 const pathes = ref<Array<Path>>([]);
 
@@ -112,6 +113,10 @@ const steps: Step[] = [
         title: '学习者授权机构公开学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
+                
+                // 学习成果副本消失
+                refVerifiedRecordsCopy.value && fadeOut(refVerifiedRecordsCopy.value);
+
                 const users = nodes.value.filter(node => node.role === 'user')
                 if (users.length === 0) {
                     reject(1);
@@ -145,7 +150,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '机构验证后公开学习成果上链',
+        title: '发证机构验证学习成果后将其上链',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const learningRecords = refLearningRecords.value as HTMLDivElement;
@@ -221,7 +226,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '经过智能合约验证后导入学分银行',
+        title: '学习成果经过智能合约验证后被导入学分银行',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const banks = nodes.value.filter(node => node.role === 'bank')
@@ -238,8 +243,18 @@ const steps: Step[] = [
                 const finish = () => {
                     count += 1;
                     if (count === 2) {
-                        refLearningRecords.value && moveTo(refLearningRecords.value, {
-                            x: bank.x - 64,
+                        // 复制一份学习成果
+                        const recordsDiv = refLearningRecords.value as HTMLDivElement;
+                        const verifiedDiv = refVerifiedRecordsCopy.value as HTMLDivElement;
+                        verifiedDiv.style.left = recordsDiv.style.left;
+                        verifiedDiv.style.top = recordsDiv.style.top;
+                        verifiedDiv.style.opacity = '1';
+
+                        refLearningRecords.value && fadeOut(refLearningRecords.value, finish);
+                        refVerifyRecords.value && fadeOut(refVerifyRecords.value, finish);
+
+                        refVerifiedRecordsCopy.value && moveTo(refVerifiedRecordsCopy.value, {
+                            x: bank.x - 96,
                             y: bank.y,
                         }, () => {
 
@@ -277,7 +292,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '从学分银行中访问学习成果',
+        title: '学习者从学分银行中访问学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -286,7 +301,7 @@ const steps: Step[] = [
                 }
                 const user = users[0];
 
-                refLearningRecords.value && moveTo(refLearningRecords.value, {
+                refVerifiedRecordsCopy.value && moveTo(refVerifiedRecordsCopy.value, {
                     x: user.x,
                     y: user.y - 64,
                 }, () => {
@@ -364,7 +379,11 @@ const windowWidth = ref<number>(window.innerWidth);
                 </div>
 
                 <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                    <Item type="credential" title="学习成果证明" />
+                    <Item type="credential" title="验证证明" />
+                </div>
+
+                <div ref="refVerifiedRecordsCopy" :style="{ opacity: 0 }" class="node">
+                    <Item type="verified" title="学习成果【已验证】" />
                 </div>
             </div>
             <div class="fullscene">

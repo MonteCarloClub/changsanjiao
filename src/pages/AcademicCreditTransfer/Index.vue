@@ -128,7 +128,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '机构存入学习成果',
+        title: '上海市教育机构存入学习成果',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const institutions = nodes.value.filter(node => node.role === 'institution')
@@ -168,7 +168,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '发起转换申请',
+        title: '学习者发起转换申请',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const banks = nodes.value.filter(node => node.role === 'bank')
@@ -207,7 +207,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '获取链下数据',
+        title: '学习者获取链下数据',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -234,7 +234,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '将链下数据发送上链',
+        title: '学习者将链下数据发送上链',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -273,7 +273,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '验证学习成果并完成转换',
+        title: '浙江省教育机构验证学习成果并完成转换',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 // 找到第二个机构
@@ -391,7 +391,7 @@ const windowWidth = ref<number>(window.innerWidth);
                 </div>
 
                 <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                    <Item type="credential" title="验证成功" />
+                    <Item type="verified" title="验证成功" />
                 </div>
 
                 <div ref="refTransferedLearningRecords" :style="{ opacity: 0 }" class="node">

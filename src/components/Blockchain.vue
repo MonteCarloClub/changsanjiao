@@ -97,7 +97,7 @@ const init = (canvas: HTMLCanvasElement) => {
     const right = blocks[blocks.length - 1];
 
     const size = roleSettings.roleImageSize;
-    const padding = 32;
+    const padding = 48;
 
     const width = right.x - left.x + padding * 2 + size;
     const height = size + padding * 2;
@@ -111,7 +111,7 @@ const init = (canvas: HTMLCanvasElement) => {
     // 写字
     const mid = (left.x + right.x) / 2
     titleX.value = mid;
-    titleY.value = left.y + size + 12
+    titleY.value = left.y + size + 32
 }
 
 </script>
