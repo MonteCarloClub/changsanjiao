@@ -63,7 +63,7 @@ const {
 
 const refSmartContract = ref<HTMLElement | null>(null);
 const refLearningRecords = ref<HTMLElement | null>(null);
-const refVerifyRecords = ref<HTMLElement | null>(null);
+const refVerifiedRecords = ref<HTMLElement | null>(null);
 const refVerifiedRecordsCopy = ref<HTMLElement | null>(null);
 
 const pathes = ref<Array<Path>>([]);
@@ -114,8 +114,9 @@ const steps: Step[] = [
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 
-                // 学习成果副本消失
+                // 验证后的学习成果及其副本消失
                 refVerifiedRecordsCopy.value && fadeOut(refVerifiedRecordsCopy.value);
+                refVerifiedRecords.value && fadeOut(refVerifiedRecords.value);
 
                 const users = nodes.value.filter(node => node.role === 'user')
                 if (users.length === 0) {
@@ -154,7 +155,7 @@ const steps: Step[] = [
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const learningRecords = refLearningRecords.value as HTMLDivElement;
-                const verifyRecords = refVerifyRecords.value as HTMLDivElement;
+                const verifyRecords = refVerifiedRecords.value as HTMLDivElement;
                 verifyRecords.style.left = learningRecords.style.left;
                 verifyRecords.style.top = learningRecords.style.top;
                 verifyRecords.style.opacity = '1';
@@ -171,7 +172,7 @@ const steps: Step[] = [
                     count === 2 && resolve(1);
                 }
 
-                refVerifyRecords.value && moveTo(refVerifyRecords.value, {
+                refVerifiedRecords.value && moveTo(refVerifiedRecords.value, {
                     x: block.x,
                     y: block.y - 64,
                 }, () => {
@@ -186,42 +187,6 @@ const steps: Step[] = [
                 })
 
                 refLearningRecords.value && fadeOut(refLearningRecords.value, finish)
-            })
-        }
-    },
-    {
-        title: '学习者公开学习成果',
-        handler: (): Promise<any> => {
-            return new Promise((resolve, reject) => {
-                const users = nodes.value.filter(node => node.role === 'user')
-                if (users.length === 0) {
-                    reject(1);
-                }
-                const user = users[0];
-                const div = refLearningRecords.value as HTMLDivElement;
-                div.style.left = user.x + 'px';
-                div.style.top = user.y + 'px';
-                div.style.opacity = '1';
-
-                const blocks = nodes.value.filter(node => node.role === 'block')
-                if (blocks.length === 0) {
-                    reject(1);
-                }
-                const block = blocks[2];
-
-                refLearningRecords.value && moveTo(refLearningRecords.value, {
-                    x: block.x,
-                    y: block.y - 64,
-                }, () => {
-                    pathes.value[3] = [{
-                        x: user.x,
-                        y: user.y - 32
-                    }, {
-                        x: block.x,
-                        y: block.y + 64,
-                    }];
-                    resolve(1)
-                })
             })
         }
     },
@@ -242,22 +207,18 @@ const steps: Step[] = [
                 let count = 0;
                 const finish = () => {
                     count += 1;
-                    if (count === 2) {
+                    if (count === 1) {
                         // 复制一份学习成果
-                        const recordsDiv = refLearningRecords.value as HTMLDivElement;
-                        const verifiedDiv = refVerifiedRecordsCopy.value as HTMLDivElement;
-                        verifiedDiv.style.left = recordsDiv.style.left;
-                        verifiedDiv.style.top = recordsDiv.style.top;
-                        verifiedDiv.style.opacity = '1';
+                        const verifiedDiv = refVerifiedRecords.value as HTMLDivElement;
+                        const verifiedDivCopy = refVerifiedRecordsCopy.value as HTMLDivElement;
+                        verifiedDivCopy.style.left = verifiedDiv.style.left;
+                        verifiedDivCopy.style.top = verifiedDiv.style.top;
+                        verifiedDivCopy.style.opacity = '1';
 
-                        refLearningRecords.value && fadeOut(refLearningRecords.value, finish);
-                        refVerifyRecords.value && fadeOut(refVerifyRecords.value, finish);
-
-                        refVerifiedRecordsCopy.value && moveTo(refVerifiedRecordsCopy.value, {
+                        refVerifiedRecords.value && moveTo(refVerifiedRecords.value, {
                             x: bank.x - 96,
                             y: bank.y,
                         }, () => {
-
                             const blocks = nodes.value.filter(node => node.role === 'block')
                             if (blocks.length === 0) {
                                 reject(1);
@@ -279,13 +240,8 @@ const steps: Step[] = [
                     }
                 }
 
-                refLearningRecords.value && moveTo(refLearningRecords.value, {
-                    x: x + 128 + 64,
-                    y,
-                }, finish);
-
-                refVerifyRecords.value && moveTo(refVerifyRecords.value, {
-                    x: x + 96,
+                refVerifiedRecords.value && moveTo(refVerifiedRecords.value, {
+                    x: x + 128,
                     y,
                 }, finish);
             })
@@ -301,7 +257,7 @@ const steps: Step[] = [
                 }
                 const user = users[0];
 
-                refVerifiedRecordsCopy.value && moveTo(refVerifiedRecordsCopy.value, {
+                refVerifiedRecords.value && moveTo(refVerifiedRecords.value, {
                     x: user.x,
                     y: user.y - 64,
                 }, () => {
@@ -378,8 +334,8 @@ const windowWidth = ref<number>(window.innerWidth);
                     <Item type="record" title="学习成果" />
                 </div>
 
-                <div ref="refVerifyRecords" :style="{ opacity: 0 }" class="node">
-                    <Item type="credential" title="验证证明" />
+                <div ref="refVerifiedRecords" :style="{ opacity: 0 }" class="node">
+                    <Item type="verified" title="学习成果【已验证】" />
                 </div>
 
                 <div ref="refVerifiedRecordsCopy" :style="{ opacity: 0 }" class="node">

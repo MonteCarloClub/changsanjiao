@@ -62,7 +62,7 @@ const screenWidth = ref<number>(window.innerWidth);
   position: fixed;
   top: 46px;
   right: 0;
-  bottom: 0;
+  bottom: 10px;
   left: 0;
 }
 

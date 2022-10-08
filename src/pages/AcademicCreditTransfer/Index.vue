@@ -75,6 +75,7 @@ const {
 } = createScene(refDynamicWindow, refWindow, init);
 
 
+const refOracle = ref<HTMLElement | null>(null);
 const refApplyArrow = ref<HTMLElement | null>(null);
 const refOffChainData = ref<HTMLElement | null>(null);
 const refTransferData = ref<HTMLElement | null>(null);
@@ -119,7 +120,7 @@ const steps: Step[] = [
                         },
                         {
                             x: block.x,
-                            y: block.y - 96
+                            y: block.y - 112
                         }
                     ]
                     resolve(1)
@@ -128,9 +129,12 @@ const steps: Step[] = [
         }
     },
     {
-        title: '上海市教育机构存入学习成果',
+        title: '上海市教育机构将学习成果上链',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
+
+                refOracle.value && fadeOut(refOracle.value);
+
                 const institutions = nodes.value.filter(node => node.role === 'institution')
                 if (institutions.length === 0) {
                     reject(1);
@@ -207,7 +211,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '学习者获取链下数据',
+        title: '学习者获取链下学习记录',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const users = nodes.value.filter(node => node.role === 'user')
@@ -234,7 +238,7 @@ const steps: Step[] = [
         }
     },
     {
-        title: '学习者将链下数据发送上链',
+        title: '学习者通过预言机将链下数据发送上链',
         handler: (): Promise<any> => {
             return new Promise((resolve, reject) => {
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -253,6 +257,12 @@ const steps: Step[] = [
                     x: block.x,
                     y: block.y - 64,
                 }, () => {
+
+                    const oracleDiv = refOracle.value as HTMLDivElement;
+                    oracleDiv.style.left = block.x + 'px';
+                    oracleDiv.style.top = user.y + 128 + 'px';
+                    oracleDiv.style.opacity = '1';
+
                     pathes.value[4] = [
                         {
                             x: user.x,
@@ -284,15 +294,15 @@ const steps: Step[] = [
                 const institution = institutions[1];
 
                 const verifyRecordsDiv = refVerifyRecords.value as HTMLDivElement;
-                verifyRecordsDiv.style.left = institution.x + 'px';
+                verifyRecordsDiv.style.left = institution.x - 32 + 'px';
                 verifyRecordsDiv.style.top = institution.y - 64 + 'px';
 
                 const transferedRecordsDiv = refTransferedLearningRecords.value as HTMLDivElement;
-                transferedRecordsDiv.style.left = institution.x + 96 + 'px';
+                transferedRecordsDiv.style.left = institution.x + 76 + 'px';
                 transferedRecordsDiv.style.top = institution.y - 64 + 'px';
 
                 const transferDataDiv = refTransferData.value as HTMLDivElement;
-                transferDataDiv.style.left = institution.x + 'px';
+                transferDataDiv.style.left = institution.x - 32 +  'px';
                 transferDataDiv.style.top = institution.y - 64 + 'px';
 
                 const blocks = nodes.value.filter(node => node.role === 'block')
@@ -303,17 +313,17 @@ const steps: Step[] = [
 
                 // 数据过去后验证
                 refLearningRecords.value && moveTo(refLearningRecords.value, {
-                    x: institution.x - 64,
+                    x: institution.x - 112,
                     y: institution.y - 64,
                 }, () => {
                     refVerifyRecords.value && fadeIn(refVerifyRecords.value, () => {
                         refVerifyRecords.value && fadeOut(refVerifyRecords.value, () => {
                             refTransferData.value && fadeIn(refTransferData.value, () => {
                                 refTransferedLearningRecords.value && fadeIn(refTransferedLearningRecords.value, () => {
-                                    transferedRecordsDiv.style.opacity = '0';
-                                    (refTransferData.value as HTMLDivElement).style.opacity = '0';
+                                    
                                     (refOffChainData.value as HTMLDivElement).style.opacity = '0';
                                     (refApplyArrow.value as HTMLDivElement).style.opacity = '0';
+                                    (refTransferData.value as HTMLDivElement).style.opacity = '0';
 
                                     pathes.value[5] = [
                                         {
@@ -325,7 +335,10 @@ const steps: Step[] = [
                                             y: block.y + 64
                                         },
                                     ]
-                                    resolve(1)
+                                    setTimeout(() => {
+                                        transferedRecordsDiv.style.opacity = '0';
+                                        resolve(1)
+                                    }, 2000);
                                 })
                             })
                         });
@@ -396,6 +409,10 @@ const windowWidth = ref<number>(window.innerWidth);
 
                 <div ref="refTransferedLearningRecords" :style="{ opacity: 0 }" class="node">
                     <Item type="transferred" title="转换后的学习成果" />
+                </div>
+
+                <div ref="refOracle" :style="{ opacity: 0 }" class="node">
+                    <Item type="oracle" title="预言机（Oracle）" />
                 </div>
 
                 <div class="line" ref="refApplyArrow" :style="{ opacity: 0 }">
