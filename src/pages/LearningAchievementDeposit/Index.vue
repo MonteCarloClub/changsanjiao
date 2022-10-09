@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { minCanvasHeight, minCanvasWidth, mobileScreenWidth } from "@/common/settings";
 import { moveTo, fadeOut } from "@/common/animate";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
@@ -17,31 +17,31 @@ import Blockchain from "@/components/Blockchain.vue";
 const init: Node[] = [
     {
         x: 15,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 50,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 85,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 85,
-        y: 90,
+        y: 86,
         role: 'user',
         title: '学习者'
     },
     {
         x: 50,
-        y: 90,
+        y: 86,
         role: 'institution',
         title: '发证机构'
     },
@@ -306,7 +306,7 @@ const windowWidth = ref<number>(window.innerWidth);
 
 <template>
     <div class="footer" :style="{
-        flex: windowWidth > 720 ? 'none' : '1'
+        flex: windowWidth > mobileScreenWidth ? 'none' : '1'
     }">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
@@ -350,20 +350,6 @@ const windowWidth = ref<number>(window.innerWidth);
 </template>
 
 <style scoped>
-.scene {
-    flex: 1;
-    position: relative;
-    height: 100%;
-}
-
-.fullscene {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-}
-
 .node {
     position: absolute;
     left: 50%;

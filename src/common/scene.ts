@@ -1,6 +1,7 @@
 import { onMounted, ref, watch } from "vue";
 import { Role } from "@/common/roles";
 import { createNet } from "@/common/roles";
+import { mobileScreenWidth } from "@/common/settings";
 
 export function createScene(
   refDynamicWindow: any,
@@ -28,7 +29,7 @@ export function createScene(
       const r = Math.min(dynamicWidth / width, dynamicHeight / height);
       scaleRate.value = r < 1 ? r : 1;
 
-      if (window.innerWidth < 720) {
+      if (window.innerWidth < mobileScreenWidth) {
         scaleRate.value = dynamicWidth / width;
       }
     }

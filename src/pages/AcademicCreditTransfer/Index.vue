@@ -2,7 +2,7 @@
     import { ref, watch } from "vue";
 
 import { moveTo, fadeOut, fadeIn, expandToLeft } from "@/common/animate";
-import { minCanvasHeight, minCanvasWidth } from "@/common/settings";
+import { minCanvasHeight, minCanvasWidth, mobileScreenWidth } from "@/common/settings";
 import { genSteps, Step } from "@/common/step";
 import { Role as Node } from "@/common/roles";
 import { createScene } from "@/common/scene";
@@ -17,37 +17,37 @@ import Blockchain from "@/components/Blockchain.vue";
 const init: Node[] = [
     {
         x: 10,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 35,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 60,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 85,
-        y: 50,
+        y: 48,
         role: 'block',
         title: '区块'
     },
     {
         x: 10,
-        y: 90,
+        y: 86,
         role: 'institution',
         title: '上海市教育机构'
     },
     {
         x: 85,
-        y: 90,
+        y: 86,
         role: 'institution',
         title: '浙江省教育机构'
     },
@@ -365,7 +365,7 @@ const windowWidth = ref<number>(window.innerWidth);
         
 <template>
     <div class="footer" :style="{
-        flex: windowWidth > 720 ? 'none' : '1'
+        flex: windowWidth > mobileScreenWidth ? 'none' : '1'
     }">
         <Steps :current="currentStep" :steps="steps" :disabled="running" />
     </div>
@@ -430,20 +430,6 @@ const windowWidth = ref<number>(window.innerWidth);
 </template>
             
 <style scoped>
-.scene {
-    flex: 1;
-    position: relative;
-    height: 100%;
-}
-
-.fullscene {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-}
-
 .node {
     position: absolute;
     left: 50%;

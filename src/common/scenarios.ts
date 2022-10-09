@@ -4,7 +4,7 @@ import actImage from "@/assets/act.png";
 
 export const scenarios = {
   lad: {
-    title: "学习成果上链",
+    title: "学习成果上链场景",
     image: ladImage,
   },
   act: {

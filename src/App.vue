@@ -10,7 +10,7 @@
     </a-menu>
   </div>
   <div class="container" :style="{
-    flexDirection: screenWidth > 720 ? 'row' : 'column-reverse'
+    flexDirection: screenWidth > mobileScreenWidth ? 'row' : 'column-reverse'
   }">
     <router-view></router-view>
   </div>
@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { watchEffect, ref } from "vue";
 import { useRoute } from "vue-router";
+import { mobileScreenWidth } from "@/common/settings";
 
 import { scenarios } from "@/common/scenarios";
 import router from "@/router";
@@ -62,7 +63,7 @@ const screenWidth = ref<number>(window.innerWidth);
   position: fixed;
   top: 46px;
   right: 0;
-  bottom: 10px;
+  bottom: 24px;
   left: 0;
 }
 
@@ -78,13 +79,24 @@ const screenWidth = ref<number>(window.innerWidth);
   margin: auto;
   transform-origin: top left;
   font-size: 16px;
+  flex: 1;
+  position: relative;
+  height: 100%;
 }
 
 .scene-container {
-  overflow: hidden;
+  overflow: visible;
+}
+
+.fullscene {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .footer {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 </style>
