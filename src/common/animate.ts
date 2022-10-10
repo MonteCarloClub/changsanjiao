@@ -1,4 +1,5 @@
 import anime from "animejs";
+import { animateDuration } from "@/common/settings";
 
 export function shrink(element: HTMLElement, cb?: () => void) {
   anime({
@@ -32,7 +33,7 @@ export function moveTo(
     left: destination.x,
     top: destination.y,
     easing: 'easeInOutExpo',
-    duration: 3000,
+    duration: animateDuration,
     complete: cb,
   });
 }
@@ -79,7 +80,7 @@ export function expandToLeft(
     targets: element,
     left: destination.x,
     easing: 'easeInOutExpo',
-    duration: 3000,
+    duration: animateDuration,
     complete: cb,
   });
 }

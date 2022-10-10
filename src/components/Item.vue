@@ -3,7 +3,7 @@
         <div v-if="title" class="title">
             {{ title }}
         </div>
-        <img :src="imgSrc" :alt="title" :width="size" />
+        <img :src="imgSrc" :alt="title" :width="size" style="filter: drop-shadow(10000px 0 0 red); transform: translate(-10000px);"/>
     </div>
 </template>
 
@@ -34,6 +34,7 @@ const imgSrc = computed(() => itemIcons[props.type]);
 .title {
     left: 50%;
     top: -28px;
+    color: red;
     position: absolute;
     white-space: nowrap;
     transform: translateX(-50%);

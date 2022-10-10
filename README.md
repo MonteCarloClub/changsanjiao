@@ -105,3 +105,8 @@ $ pnpm run dev
 - [x] 将 “上海市教育机构存入学习成果” 改为 “上海市教育机构将学习成果上链“
 - [x] 将”链下数据“改成”链下学习记录“
 - [x] 通过预言机Oracle发送链下数据，加一个Oracle图标
+
+### 2022-10-09（[v 1.1](https://github.com/MonteCarloClub/changsanjiao/releases/tag/v1.1)）
+
+- [x] 移动的图标变成红色
+- [x] 步骤之间的时间间隔再延长一些
