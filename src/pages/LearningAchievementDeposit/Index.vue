@@ -225,7 +225,7 @@ const steps: Step[] = [
                             }
                             const block = blocks[2];
 
-                            pathes.value[4] = [{
+                            pathes.value[3] = [{
                                 x: block.x,
                                 y: block.y - 64
                             }, {
@@ -267,7 +267,7 @@ const steps: Step[] = [
                     }
                     const bank = banks[0];
 
-                    pathes.value[5] = [{
+                    pathes.value[4] = [{
                         x: bank.x,
                         y: bank.y - 32
                     }, {
