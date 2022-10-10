@@ -10,6 +10,4 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
-  // 打包后的根路径
-  base: "/bank/",
 })
